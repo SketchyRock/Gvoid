@@ -1,16 +1,91 @@
-# React + Vite
+# GVOID
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+GVOID is a **Pomodoro & Deep Work Station**. It integrates a Pomodoro timer, ambient soundscape generation, a task management system, and a "Deep Focus" mode that removes all distractions.
 
-Currently, two official plugins are available:
+Whether you're studying, coding, or writing, GVOID helps you enter the flow state and stay there.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Key Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Dynamic Pomodoro Timer**: Custom work/break intervals with intuitive controls.
+- **Ambient Soundscapes**: Integrated player with curated lo-fi, nature sounds, and white noise to drown out distractions.
+- **Task Management**: Keep track of your session goals without leaving the app.
+- **Adaptive Aesthetics**: A beautiful, premium UI that looks great in both dark and light modes.
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile.
+- **Deep Focus Mode**: A dedicated mode that clears the interface, leaving only the essentials for your work session.
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (v18.0.0 or higher)
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/SketchyRock/pomodoro-website.git
+   cd pomodoro-website
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Open your browser:**
+   Navigate to [http://localhost:5173](http://localhost:5173) to see the app in action.
+
+---
+
+## Tech Stack
+
+- **Frontend**: [React 19](https://react.dev/)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Layout**: [React Grid Layout](https://github.com/react-grid-layout/react-grid-layout)
+- **Audio**: [React Player](https://github.com/cookpete/react-player)
+
+---
+
+## Deployment
+
+### Deploy to Vercel
+
+GVOID is optimized for deployment on [Vercel](https://vercel.com/):
+
+1. Push your code to a GitHub repository.
+2. Connect your repository to Vercel.
+3. The build settings should automatically be detected:
+   - **Framework Preset**: Vite
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+
+---
+
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+## Contributing
+
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+Developed by [SketchyRock](https://github.com/SketchyRock)
