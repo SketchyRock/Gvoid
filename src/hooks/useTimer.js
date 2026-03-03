@@ -1,36 +1,52 @@
-import { useState, useEffect, useCallback } from 'react';
-
-// Common intervals in minutes
-export const INTERVALS = {
-    POMODORO: { focus: 25, break: 5, label: '25/5' },
-    DEEP_WORK: { focus: 50, break: 10, label: '50/10' },
-    FLOW: { focus: 90, break: 20, label: '90/20' }
-};
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useSettings } from '../contexts/SettingsContext';
 
 export const MODES = {
     FOCUS: 'FOCUS',
     BREAK: 'BREAK'
 };
 
-export default function useTimer(initialInterval = 'POMODORO') {
-    const [selectedInterval, setSelectedInterval] = useState(initialInterval);
-    const [mode, setMode] = useState(MODES.FOCUS);
-    const [timeLeft, setTimeLeft] = useState(INTERVALS[initialInterval].focus * 60);
+export default function useTimer(initialMode = 'FOCUS') {
+    const { settings } = useSettings();
+    const [mode, setMode] = useState(initialMode);
     const [isActive, setIsActive] = useState(false);
 
-    // Helper to get current phase duration in seconds
-    const getDuration = useCallback((interval, currentMode) => {
-        const mins = currentMode === MODES.FOCUS
-            ? INTERVALS[interval].focus
-            : INTERVALS[interval].break;
-        return mins * 60;
-    }, []);
+    // Derived configuration based on settings
+    const INTERVALS = useMemo(() => ({
+        POMODORO: { focus: settings.pomodoroLength, break: settings.shortBreakLength, label: 'Standard' },
+        SHORT_BREAK: { focus: settings.pomodoroLength, break: settings.shortBreakLength, label: 'Short' },
+        LONG_BREAK: { focus: settings.pomodoroLength, break: settings.longBreakLength, label: 'Long' }
+    }), [settings]);
 
-    // Update time left when interval or mode changes
+    const [timeLeft, setTimeLeft] = useState(settings.pomodoroLength * 60);
+    const [sessionsCompleted, setSessionsCompleted] = useState(0);
+
+    // Get current mode duration
+    const getDuration = useCallback((currentMode) => {
+        if (currentMode === MODES.FOCUS) return settings.pomodoroLength * 60;
+
+        // Decide if long break or short break
+        const isLongBreak = sessionsCompleted > 0 && sessionsCompleted % settings.longBreakInterval === 0;
+        return (isLongBreak ? settings.longBreakLength : settings.shortBreakLength) * 60;
+    }, [settings, sessionsCompleted]);
+
+    // Update time left when settings change (if not active)
     useEffect(() => {
-        setTimeLeft(getDuration(selectedInterval, mode));
-        setIsActive(false); // Auto-pause when switching modes or intervals
-    }, [selectedInterval, mode, getDuration]);
+        if (!isActive) {
+            setTimeLeft(getDuration(mode));
+        }
+    }, [settings.pomodoroLength, settings.shortBreakLength, settings.longBreakLength, mode, getDuration, isActive]);
+
+    // Update tab title
+    useEffect(() => {
+        if (settings.timerInTitle) {
+            const timeStr = formatTime(timeLeft);
+            document.title = `${timeStr} - ${mode === MODES.FOCUS ? 'Focus' : 'Break'}`;
+        } else {
+            document.title = 'Focus Space';
+        }
+        return () => { document.title = 'Focus Space'; };
+    }, [timeLeft, mode, settings.timerInTitle]);
 
     // The main timer loop
     useEffect(() => {
@@ -40,33 +56,42 @@ export default function useTimer(initialInterval = 'POMODORO') {
             intervalId = setInterval(() => {
                 setTimeLeft((prevTime) => prevTime - 1);
             }, 1000);
-        } else if (timeLeft === 0) {
-            // Timer finished! Automatically switch modes
+        } else if (timeLeft === 0 && isActive) {
+            // Timer finished!
+            const newMode = mode === MODES.FOCUS ? MODES.BREAK : MODES.FOCUS;
+
             if (mode === MODES.FOCUS) {
-                setMode(MODES.BREAK);
-            } else {
-                setMode(MODES.FOCUS);
+                setSessionsCompleted(prev => prev + 1);
+                // Trigger Alarm logic would go here
             }
-            setIsActive(false);
+
+            setMode(newMode);
+            setTimeLeft(getDuration(newMode));
+
+            // Auto-start logic
+            const shouldAutoStart = (newMode === MODES.BREAK && settings.autoStartBreaks) ||
+                (newMode === MODES.FOCUS && settings.autoStartPomodoros);
+            setIsActive(shouldAutoStart);
         }
 
         return () => clearInterval(intervalId);
-    }, [isActive, timeLeft, mode]);
+    }, [isActive, timeLeft, mode, getDuration, settings]);
 
     const toggleTimer = () => setIsActive(!isActive);
 
     const resetTimer = () => {
         setIsActive(false);
-        setTimeLeft(getDuration(selectedInterval, mode));
+        setTimeLeft(getDuration(mode));
     };
 
-    const changeInterval = (newInterval) => {
-        setSelectedInterval(newInterval);
-        setMode(MODES.FOCUS); // Always reset to focus when changing scheme
+    const changeMode = (newMode) => {
+        setMode(newMode);
+        setIsActive(false);
+        setTimeLeft(getDuration(newMode));
     };
 
     // Format MM:SS
-    const formatTime = (seconds) => {
+    function formatTime(seconds) {
         const m = Math.floor(seconds / 60);
         const s = seconds % 60;
         return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
@@ -77,10 +102,10 @@ export default function useTimer(initialInterval = 'POMODORO') {
         formattedTime: formatTime(timeLeft),
         isActive,
         mode,
-        selectedInterval,
+        sessionsCompleted,
         toggleTimer,
         resetTimer,
-        changeInterval,
+        changeMode,
         formatTime
     };
 }
