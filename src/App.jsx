@@ -16,7 +16,7 @@ export default function App() {
         {/* Top Header Controls */}
         <header className="flex items-center justify-between w-full max-w-6xl mx-auto px-8 py-4 animate-fade-in shrink-0">
           <div className="flex items-baseline gap-4 group/brand">
-            <h1 className="text-3xl font-black tracking-tighter cursor-default bg-gradient-to-r from-blue-soft to-purple-soft bg-clip-text text-transparent transition-all duration-500 group-hover/brand:to-blue-soft group-hover/brand:from-purple-soft group-hover/brand:scale-105 group-hover/brand:drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]">
+            <h1 className="text-3xl font-black tracking-tighter cursor-default bg-gradient-to-r from-blue-soft via-purple-soft to-blue-soft bg-[length:200%_auto] bg-left group-hover/brand:bg-right bg-clip-text text-transparent transition-all duration-500 group-hover/brand:scale-105 group-hover/brand:drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]">
               Gvoid
             </h1>
             <a

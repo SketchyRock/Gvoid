@@ -12,30 +12,21 @@ export default function useTimer(initialMode = 'FOCUS') {
     const [isActive, setIsActive] = useState(false);
 
     // Derived configuration based on settings
-    const INTERVALS = useMemo(() => ({
-        POMODORO: { focus: settings.pomodoroLength, break: settings.shortBreakLength, label: 'Standard' },
-        SHORT_BREAK: { focus: settings.pomodoroLength, break: settings.shortBreakLength, label: 'Short' },
-        LONG_BREAK: { focus: settings.pomodoroLength, break: settings.longBreakLength, label: 'Long' }
-    }), [settings]);
-
     const [timeLeft, setTimeLeft] = useState(settings.pomodoroLength * 60);
     const [sessionsCompleted, setSessionsCompleted] = useState(0);
 
     // Get current mode duration
     const getDuration = useCallback((currentMode) => {
         if (currentMode === MODES.FOCUS) return settings.pomodoroLength * 60;
-
-        // Decide if long break or short break
-        const isLongBreak = sessionsCompleted > 0 && sessionsCompleted % settings.longBreakInterval === 0;
-        return (isLongBreak ? settings.longBreakLength : settings.shortBreakLength) * 60;
-    }, [settings, sessionsCompleted]);
+        return settings.shortBreakLength * 60;
+    }, [settings]);
 
     // Update time left when settings change (if not active)
     useEffect(() => {
         if (!isActive) {
             setTimeLeft(getDuration(mode));
         }
-    }, [settings.pomodoroLength, settings.shortBreakLength, settings.longBreakLength, mode, getDuration, isActive]);
+    }, [settings.pomodoroLength, settings.shortBreakLength, mode, getDuration, isActive]);
 
     // Update tab title
     useEffect(() => {

@@ -32,37 +32,32 @@ export default function SettingsPage({ isOpen, onClose }) {
 
                 {/* Content */}
                 <div className="flex-1 overflow-y-auto p-6 space-y-8">
-                    {/* Timer Durations */}
                     <section className="space-y-4">
-                        <h3 className="text-xs font-bold uppercase tracking-widest text-blue-soft border-b border-gray-700 pb-2">Timer Intervals (Minutes)</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="space-y-2">
-                                <label className="text-sm text-gray-400">Pomodoro</label>
-                                <input
-                                    type="number"
-                                    value={settings.pomodoroLength}
-                                    onChange={(e) => handleChange('pomodoroLength', parseInt(e.target.value) || 0)}
-                                    className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:ring-2 focus:ring-blue-soft outline-none"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm text-gray-400">Short Break</label>
-                                <input
-                                    type="number"
-                                    value={settings.shortBreakLength}
-                                    onChange={(e) => handleChange('shortBreakLength', parseInt(e.target.value) || 0)}
-                                    className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:ring-2 focus:ring-blue-soft outline-none"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm text-gray-400">Long Break</label>
-                                <input
-                                    type="number"
-                                    value={settings.longBreakLength}
-                                    onChange={(e) => handleChange('longBreakLength', parseInt(e.target.value) || 0)}
-                                    className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:ring-2 focus:ring-blue-soft outline-none"
-                                />
-                            </div>
+                        <h3 className="text-xs font-bold uppercase tracking-widest text-blue-soft border-b border-gray-700 pb-2">Pomodoro Frequency (Work / Break)</h3>
+                        <div className="grid grid-cols-3 gap-4">
+                            {[
+                                { focus: 25, break: 5, label: '25 / 5' },
+                                { focus: 50, break: 10, label: '50 / 10' },
+                                { focus: 90, break: 20, label: '90 / 20' }
+                            ].map((option) => {
+                                const isSelected = settings.pomodoroLength === option.focus && settings.shortBreakLength === option.break;
+                                return (
+                                    <button
+                                        key={option.label}
+                                        onClick={() => updateSettings({
+                                            pomodoroLength: option.focus,
+                                            shortBreakLength: option.break
+                                        })}
+                                        className={`py-3 px-4 rounded-xl border flex flex-col items-center gap-1 transition-all ${isSelected
+                                            ? 'bg-blue-soft/10 border-blue-soft text-blue-soft shadow-[0_0_15px_rgba(168,85,247,0.2)]'
+                                            : 'bg-gray-900 border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-300'
+                                            }`}
+                                    >
+                                        <span className={`text-lg font-bold ${isSelected ? 'text-white' : ''}`}>{option.label}</span>
+                                        <span className="text-[10px] uppercase tracking-wider opacity-60">Minutes</span>
+                                    </button>
+                                );
+                            })}
                         </div>
                     </section>
 
@@ -93,18 +88,6 @@ export default function SettingsPage({ isOpen, onClose }) {
                                 >
                                     <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${settings.autoStartPomodoros ? 'left-7' : 'left-1'}`} />
                                 </button>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-sm font-medium">Long Break Interval</p>
-                                    <p className="text-xs text-gray-400">Number of sessions before a long break</p>
-                                </div>
-                                <input
-                                    type="number"
-                                    value={settings.longBreakInterval}
-                                    onChange={(e) => handleChange('longBreakInterval', parseInt(e.target.value) || 4)}
-                                    className="w-20 bg-gray-900 border border-gray-700 rounded-lg p-2 focus:ring-2 focus:ring-blue-soft outline-none text-right"
-                                />
                             </div>
                         </div>
                     </section>
@@ -189,12 +172,27 @@ export default function SettingsPage({ isOpen, onClose }) {
                                     <p className="text-sm font-medium">Daily Goal (Sessions)</p>
                                     <p className="text-xs text-gray-400">Target number of focus sessions per day</p>
                                 </div>
-                                <input
-                                    type="number"
-                                    value={settings.dailyGoal}
-                                    onChange={(e) => handleChange('dailyGoal', parseInt(e.target.value) || 1)}
-                                    className="w-20 bg-gray-900 border border-gray-700 rounded-lg p-2 focus:ring-2 focus:ring-blue-soft outline-none text-right"
-                                />
+                                <div className="flex items-center gap-1 bg-gray-900 border border-gray-700 rounded-lg p-1">
+                                    <button
+                                        onClick={() => handleChange('dailyGoal', Math.max(1, (settings.dailyGoal || 1) - 1))}
+                                        className="w-8 h-8 flex items-center justify-center hover:bg-gray-800 rounded-md transition-colors text-gray-400 hover:text-white"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                                        </svg>
+                                    </button>
+                                    <div className="w-10 text-center font-bold text-sm select-none">
+                                        {settings.dailyGoal}
+                                    </div>
+                                    <button
+                                        onClick={() => handleChange('dailyGoal', (settings.dailyGoal || 1) + 1)}
+                                        className="w-8 h-8 flex items-center justify-center hover:bg-gray-800 rounded-md transition-colors text-gray-400 hover:text-white"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </section>

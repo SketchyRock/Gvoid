@@ -9,8 +9,6 @@ export const SettingsProvider = ({ children }) => {
     const defaultSettings = {
         pomodoroLength: 25,
         shortBreakLength: 5,
-        longBreakLength: 15,
-        longBreakInterval: 4,
         autoStartBreaks: false,
         autoStartPomodoros: false,
         alarmSound: 'digital',
@@ -18,7 +16,7 @@ export const SettingsProvider = ({ children }) => {
         desktopNotifications: false,
         theme: 'deep-focus',
         timerInTitle: true,
-        dailyGoal: 8,
+        dailyGoal: 5,
         taskSound: true
     };
 
