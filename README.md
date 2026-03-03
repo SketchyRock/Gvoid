@@ -26,8 +26,8 @@ Whether you're studying, coding, or writing, GVOID helps you enter the flow stat
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/SketchyRock/pomodoro-website.git
-   cd pomodoro-website
+   git clone https://github.com/SketchyRock/Gvoid.git
+   cd Gvoid
    ```
 
 2. **Install dependencies:**

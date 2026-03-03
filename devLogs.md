@@ -42,7 +42,7 @@ features to add:
 
 * **State Management:** Use a `gameContext` or a custom `useGame` hook. Persistent storage via `localStorage`.
 * **Efficiency:** Use CSS filters for "pixel-art" lighting effects. Keep animations light (simple sprite sheets or CSS transforms).
-* **UI Integration:** The game should be a toggleable section of the main Pomodoro site.
+* **UI Integration:** The game should be a toggleable section of Gvoid.
 
 **4. Tasks for AI:**
 
@@ -67,7 +67,7 @@ Since you’re building this, here are three 1,000-hour "Chase Items" to include
 
 **System Role:** You are a Full-Stack React Developer and Data Architect.
 
-**Objective:** Design a dual-layered statistics system for this Pomodoro website that tracks both real-world productivity and in-game "Abyssal Descent" progress.
+**Objective:** Design a dual-layered statistics system for Gvoid that tracks both real-world productivity and in-game "Abyssal Descent" progress.
 
 **1. The "Data Monolith" (Unified State):**
 
