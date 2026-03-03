@@ -4,6 +4,6 @@
 
 @layer base {
   body {
-    @apply bg-zen-900 text-zen-100 font-sans antialiased;
+    @apply bg-gray-900 text-gray-100 font-sans antialiased;
   }
 }

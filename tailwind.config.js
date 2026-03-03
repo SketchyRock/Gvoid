@@ -7,19 +7,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Deep, muted grays for the dark mode background
-        zen: {
-          900: '#121212', // Main background - slightly off-black
-          800: '#1A1A1A', // Secondary background (cards, panels)
-          700: '#2A2A2A', // Borders, subtle hover states
-          300: '#A3A3A3', // Muted text for secondary info
-          100: '#F5F5F5', // Primary reading text
+        // Dark grays for the dark mode background
+        gray: {
+          900: '#0f172a', // Main background - slate 900
+          800: '#1e293b', // Secondary background - slate 800
+          700: '#334155', // Borders, subtle hover states - slate 700
+          300: '#cbd5e1', // Muted text for secondary info - slate 300
+          100: '#f1f5f9', // Primary reading text - slate 100
         },
-        // Soft ambers for accents, focus actions, and active timers
-        amber: {
-          soft: '#F59E0B', // Primary accent
-          glow: '#D97706', // Hover accent
-          muted: '#78350F' // Background for active states
+        // Blues for accents, focus actions, and active timers
+        blue: {
+          soft: '#3b82f6', // Primary accent - blue 500
+          glow: '#2563eb', // Hover accent - blue 600
+          muted: '#1e3a8a' // Background for active states - blue 900
         }
       },
       fontFamily: {

@@ -6,14 +6,14 @@ import AmbientSound from './components/audio/AmbientSound';
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-zen-900 text-zen-100 transition-colors duration-700 ease-in-out font-sans">
+    <div className="min-h-screen bg-gray-900 text-gray-100 transition-colors duration-700 ease-in-out font-sans">
 
-      {/* Hidden Navigation Area (Reveals on mouse hover near the top) */}
-      <nav className="fixed top-0 w-full h-20 opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-center justify-between px-8 bg-gradient-to-b from-zen-900 to-transparent z-50">
-        <div className="text-amber-soft font-semibold tracking-widest text-sm uppercase">Focus Space</div>
+      {/* Navigation Area */}
+      <nav className="fixed top-0 w-full h-20 transition-all duration-300 flex items-center justify-between px-8 bg-gradient-to-b from-gray-900 to-transparent z-50 hover:bg-gray-900/80 border-b border-transparent hover:border-gray-800">
+        <div className="text-blue-soft font-semibold tracking-widest text-sm uppercase transition-transform hover:scale-105 cursor-default">Focus Space</div>
         <div className="flex gap-6 items-center">
           <AmbientSound />
-          <button className="text-zen-300 hover:text-zen-100 transition-colors text-sm">Settings</button>
+          <button className="text-gray-300 hover:text-gray-100 hover:scale-105 transition-all text-sm">Settings</button>
         </div>
       </nav>
 

@@ -109,69 +109,54 @@ export default function AmbientSound() {
     };
 
     return (
-        <div className="relative">
-
+        <div className="flex items-center gap-4 bg-gray-800/40 backdrop-blur-sm px-4 py-2 rounded-xl border border-gray-700/50 transition-all hover:bg-gray-800/60 hover:border-gray-600">
             {/* Hidden YouTube Player Container */}
-            {/* We use 10x10 instead of hidden to prevent browser autoplay blocks */}
             <div className="absolute opacity-0 pointer-events-none w-0 h-0 overflow-hidden">
                 <div ref={containerRef} />
             </div>
 
-            {/* Button to toggle menu */}
+            {/* Play/Pause Button */}
             <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="flex items-center gap-2 text-zen-300 hover:text-amber-soft transition-colors text-sm px-3 py-2 rounded-lg hover:bg-zen-800"
-                title="Ambient Sounds"
+                onClick={togglePlay}
+                disabled={!isReady}
+                className={`w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-sm
+                    ${!isReady ? 'bg-gray-700 text-gray-500 cursor-not-allowed' :
+                        isPlaying ? 'bg-blue-soft text-gray-900 hover:bg-blue-glow shadow-[0_0_12px_rgba(59,130,246,0.6)]' : 'bg-gray-700 text-gray-100 hover:bg-gray-600 hover:text-blue-soft'}`}
+                title={!isReady ? 'Loading...' : isPlaying ? 'Pause Audio' : 'Play Audio'}
             >
-                <span>{isPlaying ? '🔊' : '🔈'}</span>
-                <span>{activeTrack.label}</span>
+                {!isReady ? '⌛' : isPlaying ? '⏸' : '▶'}
             </button>
 
-            {/* Audio Control Menu */}
-            {isMenuOpen && (
-                <div className="absolute top-12 right-0 w-56 bg-zen-800 border border-zen-700 rounded-xl shadow-2xl p-4 z-50 animate-fade-in origin-top-right">
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-xs uppercase tracking-widest text-zen-300">Soundscape</h3>
-                        <button
-                            onClick={togglePlay}
-                            disabled={!isReady}
-                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors
-                ${!isReady ? 'bg-zen-700 text-zen-500 cursor-not-allowed' :
-                                    isPlaying ? 'bg-amber-soft text-zen-900' : 'bg-zen-700 text-zen-100 hover:bg-zen-600 hover:text-amber-soft'}`}
-                        >
-                            {!isReady ? '⌛' : isPlaying ? '⏸' : '▶'}
-                        </button>
-                    </div>
+            {/* Track Selector */}
+            <div className="flex items-center gap-1.5 border-l border-gray-700/80 pl-4">
+                {SOUND_TRACKS.map(track => (
+                    <button
+                        key={track.id}
+                        onClick={() => handleTrackChange(track.id)}
+                        className={`text-xs px-2.5 py-1.5 rounded-md transition-all hover:-translate-y-0.5
+                            ${activeTrackId === track.id ? 'bg-gray-700 text-blue-soft font-medium shadow-sm' : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700/50'}`}
+                    >
+                        {track.label}
+                    </button>
+                ))}
+            </div>
 
-                    <div className="space-y-1 mb-4">
-                        {SOUND_TRACKS.map(track => (
-                            <button
-                                key={track.id}
-                                onClick={() => handleTrackChange(track.id)}
-                                className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${activeTrackId === track.id ? 'bg-zen-700 text-amber-soft' : 'text-zen-300 hover:bg-zen-700 hover:text-zen-100'}`}
-                            >
-                                {track.label}
-                            </button>
-                        ))}
-                    </div>
-
-                    <div className="space-y-2 mt-4 pt-4 border-t border-zen-700">
-                        <div className="flex justify-between text-xs text-zen-300">
-                            <span>Volume</span>
-                            <span>{volume}%</span>
-                        </div>
-                        <input
-                            type="range"
-                            min="0"
-                            max="100"
-                            step="5"
-                            value={volume}
-                            onChange={(e) => setVolume(parseInt(e.target.value))}
-                            className="w-full accent-amber-soft"
-                        />
-                    </div>
-                </div>
-            )}
+            {/* Volume Control */}
+            <div className="flex items-center gap-2 border-l border-gray-700/80 pl-4 group">
+                <span className="text-xs text-gray-400 group-hover:scale-110 transition-transform cursor-default" title={`Volume: ${volume}%`}>
+                    {volume > 50 ? '🔊' : volume > 0 ? '🔉' : '🔈'}
+                </span>
+                <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="5"
+                    value={volume}
+                    onChange={(e) => setVolume(parseInt(e.target.value))}
+                    className="w-20 accent-blue-soft cursor-pointer hover:scale-[1.05] transition-transform opacity-70 hover:opacity-100"
+                    title={`Volume: ${volume}%`}
+                />
+            </div>
         </div>
     );
 }
