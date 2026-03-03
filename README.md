@@ -4,8 +4,6 @@ GVOID is a **Pomodoro & Deep Work Station**. It integrates a Pomodoro timer, amb
 
 Whether you're studying, coding, or writing, GVOID helps you enter the flow state and stay there.
 
-![GVOID](image.jpg)
-
 ---
 
 ## Key Features
