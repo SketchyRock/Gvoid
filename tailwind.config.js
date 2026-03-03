@@ -20,6 +20,12 @@ export default {
           soft: '#3b82f6', // Primary accent - blue 500
           glow: '#2563eb', // Hover accent - blue 600
           muted: '#1e3a8a' // Background for active states - blue 900
+        },
+        // Purples for the new Gvoid theme
+        purple: {
+          soft: '#a855f7', // purple 500
+          glow: '#9333ea', // purple 600
+          muted: '#581c87' // purple 900
         }
       },
       fontFamily: {

@@ -15,7 +15,20 @@ export default function App() {
 
         {/* Top Header Controls */}
         <header className="flex items-center justify-between w-full max-w-6xl mx-auto px-8 py-4 animate-fade-in shrink-0">
-          <div className="text-blue-soft font-semibold tracking-widest text-sm uppercase transition-transform hover:scale-105 cursor-default">Focus Space</div>
+          <div className="flex items-baseline gap-4 group/brand">
+            <h1 className="text-3xl font-black tracking-tighter cursor-default bg-gradient-to-r from-blue-soft to-purple-soft bg-clip-text text-transparent transition-all duration-500 group-hover/brand:to-blue-soft group-hover/brand:from-purple-soft group-hover/brand:scale-105 group-hover/brand:drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]">
+              Gvoid
+            </h1>
+            <a
+              href="https://github.com/SketchyRock"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative text-[10px] font-bold text-gray-500 hover:text-purple-soft transition-all tracking-[0.2em] uppercase group/link"
+            >
+              by SketchyRock
+              <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-purple-soft transition-all duration-300 group-hover/link:w-full"></span>
+            </a>
+          </div>
           <div className="flex gap-6 items-center">
             <AmbientSound />
             <button
