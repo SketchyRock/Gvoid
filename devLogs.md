@@ -7,7 +7,7 @@ features to add:
 - add more stimulating visuals, possibly an afk thing or game that plays in the background
     - desktop rpg that can only be progressed when study timer stops, afk while study timer is active
 - study statistics created from csv file
-- make the website more flexible, allow user to move components around the screen.
+- fix the music player, user must click twice to play music initially
 
 ---
 
