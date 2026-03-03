@@ -16,7 +16,7 @@ export const SettingsProvider = ({ children }) => {
         alarmSound: 'digital',
         alarmVolume: 50,
         desktopNotifications: false,
-        theme: 'dark',
+        theme: 'deep-focus',
         timerInTitle: true,
         dailyGoal: 8,
         taskSound: true
@@ -32,6 +32,11 @@ export const SettingsProvider = ({ children }) => {
     useEffect(() => {
         localStorage.setItem('pomodoro-settings', JSON.stringify(settings));
     }, [settings]);
+
+    // Apply theme
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', settings.theme);
+    }, [settings.theme]);
 
     const updateSettings = (newSettings) => {
         setSettings(prev => ({ ...prev, ...newSettings }));

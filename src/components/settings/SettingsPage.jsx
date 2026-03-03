@@ -159,6 +159,19 @@ export default function SettingsPage({ isOpen, onClose }) {
                     <section className="space-y-4">
                         <h3 className="text-xs font-bold uppercase tracking-widest text-blue-soft border-b border-gray-700 pb-2">Visuals</h3>
                         <div className="flex flex-col gap-4">
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Theme</label>
+                                <select
+                                    value={settings.theme}
+                                    onChange={(e) => handleChange('theme', e.target.value)}
+                                    className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:ring-2 focus:ring-blue-soft outline-none"
+                                >
+                                    <option value="deep-focus">Deep Focus (Purple & Dark Grey)</option>
+                                    <option value="clean-minimalist">Clean Minimalist (Blue & Light Grey)</option>
+                                    <option value="solar-retro">Solar Retro (Yellow/Orange & Brown)</option>
+                                    <option value="evergreen-forest">Evergreen Forest (Green & Slate)</option>
+                                </select>
+                            </div>
                             <div className="flex items-center justify-between">
                                 <div>
                                     <p className="text-sm font-medium">Timer in Tab Title</p>

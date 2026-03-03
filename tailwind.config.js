@@ -7,19 +7,20 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Dark grays for the dark mode background
+        // Mapped to CSS variables for dynamic theming
         gray: {
-          900: '#0f172a', // Main background - slate 900
-          800: '#1e293b', // Secondary background - slate 800
-          700: '#334155', // Borders, subtle hover states - slate 700
-          300: '#cbd5e1', // Muted text for secondary info - slate 300
-          100: '#f1f5f9', // Primary reading text - slate 100
+          900: 'var(--color-gray-900)',
+          800: 'var(--color-gray-800)',
+          700: 'var(--color-gray-700)',
+          400: 'var(--color-gray-400)',
+          300: 'var(--color-gray-300)',
+          100: 'var(--color-gray-100)',
         },
-        // Blues for accents, focus actions, and active timers
+        // Mapped to CSS variables for dynamic theming
         blue: {
-          soft: '#3b82f6', // Primary accent - blue 500
-          glow: '#2563eb', // Hover accent - blue 600
-          muted: '#1e3a8a' // Background for active states - blue 900
+          soft: 'var(--color-blue-soft)',
+          glow: 'var(--color-blue-glow)',
+          muted: 'var(--color-blue-muted)'
         },
         // Purples for the new Gvoid theme
         purple: {
