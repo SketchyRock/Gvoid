@@ -20,9 +20,9 @@ const WIDGETS = {
 
 // Initial default layout for the 3x3 grid
 const DEFAULT_LAYOUT = [
-  { i: 'timer', x: 0, y: 0, w: 1, h: 1 },
-  { i: 'audio', x: 1, y: 0, w: 1, h: 1 },
-  { i: 'tasks', x: 2, y: 0, w: 1, h: 1 },
+  { i: 'timer', x: 0, y: 0, w: 1, h: 1, maxH: 2, maxW: 2 },
+  { i: 'audio', x: 1, y: 0, w: 1, h: 1, maxH: 2, maxW: 2 },
+  { i: 'tasks', x: 2, y: 0, w: 1, h: 1, maxH: 2, maxW: 2 },
 ];
 
 export default function App() {
@@ -33,7 +33,15 @@ export default function App() {
   // Widget layout state with LocalStorage persistence
   const [layouts, setLayouts] = useState(() => {
     const saved = localStorage.getItem('gvoid_widget_layouts');
-    return saved ? JSON.parse(saved) : { lg: DEFAULT_LAYOUT };
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Ensure existing layouts respect the new max constraints
+      if (parsed.lg) {
+        parsed.lg = parsed.lg.map(item => ({ ...item, maxH: 2, maxW: 2 }));
+      }
+      return parsed;
+    }
+    return { lg: DEFAULT_LAYOUT };
   });
 
   useEffect(() => {
@@ -67,19 +75,33 @@ export default function App() {
     // onLayoutChange again, causing an infinite loop.
 
     setLayouts((prevLayouts) => {
-      // Simple stringify check to prevent unnecessary state updates
-      if (JSON.stringify(prevLayouts) === JSON.stringify(allLayouts)) {
+      // Ensure all items in all layouts respect constraints during change
+      const constrainedLayouts = {};
+      Object.keys(allLayouts).forEach(breakpoint => {
+        constrainedLayouts[breakpoint] = allLayouts[breakpoint].map(item => ({
+          ...item,
+          maxH: 2,
+          maxW: 2
+        }));
+      });
+
+      if (JSON.stringify(prevLayouts) === JSON.stringify(constrainedLayouts)) {
         return prevLayouts;
       }
-      localStorage.setItem('gvoid_widget_layouts', JSON.stringify(allLayouts));
-      return allLayouts;
+      localStorage.setItem('gvoid_widget_layouts', JSON.stringify(constrainedLayouts));
+      return constrainedLayouts;
     });
   };
 
   const getGridItemConfig = (key) => {
     const layoutArray = layouts.lg || DEFAULT_LAYOUT;
     const config = layoutArray.find(item => item.i === key);
-    return config || { x: 0, y: 0, w: 1, h: 1 };
+    return config || { x: 0, y: 0, w: 1, h: 1, maxH: 2, maxW: 2 };
+  };
+
+  const resetLayouts = () => {
+    setLayouts({ lg: DEFAULT_LAYOUT });
+    localStorage.removeItem('gvoid_widget_layouts');
   };
 
   return (
@@ -88,7 +110,8 @@ export default function App() {
 
         {/* Top Header Controls */}
         <header className="flex items-center justify-between w-full max-w-7xl mx-auto px-6 py-3 animate-fade-in shrink-0 relative z-50">
-          <div className="flex items-baseline gap-4 group/brand">
+          <div className="flex items-center gap-3 group/brand">
+            <img src="/gvoid-logo.svg" alt="Gvoid Logo" className="w-8 h-8 group-hover/brand:scale-110 transition-transform duration-500 group-hover/brand:drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
             <h1 className="text-2xl font-black tracking-tighter cursor-default bg-gradient-to-r from-blue-soft via-purple-soft to-blue-soft bg-[length:200%_auto] bg-left group-hover/brand:bg-right bg-clip-text text-transparent transition-all duration-500 group-hover/brand:scale-105 group-hover/brand:drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]">
               Gvoid
             </h1>
@@ -112,8 +135,8 @@ export default function App() {
           </div>
         </header>
 
-        {/* Main Focus Area - No Scrolling, 3x3 Grid constraint */}
-        <main className="flex-1 w-full h-full relative p-4 flex justify-center overflow-hidden">
+        {/* Main Focus Area - Fixed Viewport, No Scrolling */}
+        <main className="flex-1 w-full relative p-4 flex justify-center overflow-hidden pb-12">
           <div ref={containerRef} className="w-full max-w-7xl h-full mx-auto relative z-10 animate-fade-in">
             {containerWidth > 0 && (
               <ResponsiveGridLayout
@@ -122,14 +145,20 @@ export default function App() {
                 layouts={layouts}
                 breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                 cols={{ lg: 3, md: 3, sm: 2, xs: 1, xxs: 1 }}
-                rowHeight={260} // Slightly tighter to ensure 3 rows fit well vertically without scrolling
+                rowHeight={200} // Further reduced to ensure 3 rows fit with safe margins
                 onLayoutChange={onLayoutChange}
                 draggableHandle=".drag-handle"
-                compactType={null} // Disable auto-packing, allowing empty spaces
-                preventCollision={true} // Stop widgets from pushing each other out of place when dropped on empty spots
+                compactType={null}
+                verticalCompact={false}
+                preventCollision={true}
+                allowOverlap={false}     // Disabled overlap to prioritize handle visibility
+                isBounded={true}        // Strictly keep within the grid bounds
+                maxRows={3}              // Constrain to 3 rows
+                maxW={2}                 // Prevent any widget from being wider than 2 units
+                maxH={2}                 // Prevent any widget from being taller than 2 units
               >
                 {Object.keys(WIDGETS).map(key => (
-                  <div key={key} data-grid={getGridItemConfig(key)}>
+                  <div key={key}>
                     <StickyWidget id={key}>
                       {WIDGETS[key]}
                     </StickyWidget>
@@ -141,7 +170,11 @@ export default function App() {
         </main>
 
         {/* Modals */}
-        <SettingsPage isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+        <SettingsPage
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          onResetLayouts={resetLayouts}
+        />
       </div>
     </SettingsProvider>
   );

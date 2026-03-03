@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSettings } from '../../contexts/SettingsContext';
 
-export default function SettingsPage({ isOpen, onClose }) {
+export default function SettingsPage({ isOpen, onClose, onResetLayouts }) {
     const { settings, updateSettings, resetToDefaults } = useSettings();
 
     if (!isOpen) return null;
@@ -12,6 +12,13 @@ export default function SettingsPage({ isOpen, onClose }) {
 
     const handleChange = (key, value) => {
         updateSettings({ [key]: value });
+    };
+
+    const handleReset = () => {
+        if (window.confirm('Reset all settings and widget positions to default?')) {
+            resetToDefaults();
+            if (onResetLayouts) onResetLayouts();
+        }
     };
 
     return (
@@ -201,7 +208,7 @@ export default function SettingsPage({ isOpen, onClose }) {
                 {/* Footer */}
                 <div className="p-6 border-t border-gray-700 bg-gray-800/50 flex justify-between gap-4">
                     <button
-                        onClick={resetToDefaults}
+                        onClick={handleReset}
                         className="text-sm text-gray-400 hover:text-white transition-colors"
                     >
                         Reset to Defaults

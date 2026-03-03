@@ -34,9 +34,9 @@ export default function useTimer(initialMode = 'FOCUS') {
             const timeStr = formatTime(timeLeft);
             document.title = `${timeStr} - ${mode === MODES.FOCUS ? 'Focus' : 'Break'}`;
         } else {
-            document.title = 'Focus Space';
+            document.title = 'Gvoid';
         }
-        return () => { document.title = 'Focus Space'; };
+        return () => { document.title = 'Gvoid'; };
     }, [timeLeft, mode, settings.timerInTitle]);
 
     // The main timer loop

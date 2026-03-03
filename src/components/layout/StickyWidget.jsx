@@ -26,9 +26,6 @@ const StickyWidget = forwardRef(({ id, children, className, style, onMouseDown, 
                 </svg>
             </div>
             {children}
-
-            {/* Visual pin/tape for sticky note effect */}
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-3 bg-yellow-600/20 rounded shadow-sm z-50 pointer-events-none transform -rotate-2 backdrop-blur-sm border border-yellow-500/10"></div>
         </div>
     );
 });

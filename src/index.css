@@ -73,17 +73,40 @@
     @apply bg-gray-900 text-gray-100 font-sans antialiased;
   }
 
-  /* React Grid Layout Overrides */
-  .react-grid-item.react-grid-placeholder {
-    @apply bg-blue-soft/20 border-2 border-dashed border-blue-soft/50 rounded-2xl !opacity-100;
-  }
+}
 
-  .react-resizable-handle {
-    @apply !w-6 !h-6 !bg-none transition-transform hover:scale-125;
-  }
+/* end @layer base */
 
-  .react-resizable-handle::after {
-    content: '';
-    @apply absolute bottom-2 right-2 w-2 h-2 border-r-2 border-b-2 border-gray-500 rounded-br-sm;
-  }
+/* React Grid Layout Specific Overrides - Priority CSS */
+.react-grid-item.react-grid-placeholder {
+  background: var(--color-blue-soft) !important;
+  opacity: 0.15 !important;
+  border: 2px dashed var(--color-blue-soft) !important;
+  border-radius: 1rem !important;
+  z-index: 0 !important;
+}
+
+/* Stylize the resize handle to match the theme */
+.react-resizable-handle {
+  width: 24px !important;
+  height: 24px !important;
+  background: none !important;
+  transition: transform 0.2s ease-in-out !important;
+  cursor: nwse-resize !important;
+}
+
+.react-resizable-handle:hover {
+  transform: scale(1.25) !important;
+}
+
+.react-resizable-handle::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: 8px !important;
+  right: 8px !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-right: 2px solid var(--color-blue-soft) !important;
+  border-bottom: 2px solid var(--color-blue-soft) !important;
+  border-radius: 0 0 2px 0 !important;
 }
