@@ -16,60 +16,60 @@ export default function CurrentFocus() {
     const hasCompletedTasks = tasks.some(t => t.completed);
 
     return (
-        <div className="w-full max-w-md transition-opacity duration-500 opacity-100">
-            <div className="bg-gray-800 p-8 rounded-3xl border border-gray-700 shadow-2xl relative overflow-hidden group">
+        <div className="w-full h-full transition-opacity duration-500 opacity-100 flex flex-col">
+            <div className="bg-gray-800 p-5 rounded-2xl border border-gray-700 shadow-xl relative overflow-hidden group h-full flex flex-col">
 
                 {/* Header */}
-                <div className="flex justify-between items-center mb-6 relative z-10">
-                    <h2 className="text-gray-300 text-xs uppercase tracking-[0.2em] font-semibold">
+                <div className="flex justify-between items-center mb-3 relative z-10 shrink-0">
+                    <h2 className="text-gray-300 text-[10px] uppercase tracking-[0.2em] font-semibold">
                         Current Focus
                         <span className="ml-2 font-normal opacity-50">({tasks.length}/{MAX_TASKS})</span>
                     </h2>
 
-                    {/* Clear button - Always visible when tasks are completed */}
+                    {/* Clear button */}
                     {hasCompletedTasks && (
                         <button
                             onClick={clearCompleted}
-                            className="text-xs text-gray-400 hover:text-blue-soft transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-soft rounded px-2 py-1"
+                            className="text-[10px] text-gray-400 hover:text-blue-soft transition-all hover:scale-105 focus:outline-none focus:ring-1 focus:ring-blue-soft rounded px-1"
                         >
-                            Clear Done
+                            Clear
                         </button>
                     )}
                 </div>
 
                 {/* Task List */}
-                <ul className="space-y-4 relative z-10 mb-6 min-h-[140px]">
+                <ul className="space-y-2 relative z-10 mb-3 flex-1 overflow-y-auto min-h-0 pr-1">
                     {tasks.length === 0 ? (
-                        <li className="text-gray-300 text-sm italic text-center py-8 opacity-50">
-                            What is your primary focus right now?
+                        <li className="text-gray-300 text-xs italic text-center py-4 opacity-50 pt-8">
+                            What is your primary focus?
                         </li>
                     ) : (
                         tasks.map(task => (
                             <li
                                 key={task.id}
-                                className={`flex items-start gap-4 group/item transition-all duration-300 ${task.completed ? 'opacity-50' : 'opacity-100'}`}
+                                className={`flex items-start gap-3 group/item transition-all duration-300 ${task.completed ? 'opacity-50' : 'opacity-100'}`}
                             >
                                 {/* Custom Checkbox */}
                                 <button
                                     onClick={() => toggleTask(task.id)}
-                                    className={`w-5 h-5 mt-1 rounded-full border-2 transition-colors flex-shrink-0 flex items-center justify-center
-                    ${task.completed
+                                    className={`w-4 h-4 mt-0.5 rounded border transition-colors flex-shrink-0 flex items-center justify-center
+                                        ${task.completed
                                             ? 'border-blue-soft bg-blue-soft text-gray-900'
-                                            : 'border-gray-700 hover:border-blue-soft group-hover/item:border-blue-soft'
+                                            : 'border-gray-600 hover:border-blue-soft group-hover/item:border-blue-soft'
                                         }`}
                                 >
-                                    {task.completed && <span className="text-xs text-center leading-none inline-block">✓</span>}
+                                    {task.completed && <span className="text-[10px] text-center leading-none inline-block">✓</span>}
                                 </button>
 
                                 {/* Task Text */}
-                                <span className={`text-lg flex-grow transition-all duration-300 ${task.completed ? 'text-gray-300 line-through decoration-gray-700' : 'text-gray-100'}`}>
+                                <span className={`text-sm leading-tight flex-grow transition-all duration-300 ${task.completed ? 'text-gray-300 line-through decoration-gray-700' : 'text-gray-100'}`}>
                                     {task.text}
                                 </span>
 
-                                {/* Delete Button (always visible) */}
+                                {/* Delete Button */}
                                 <button
                                     onClick={() => removeTask(task.id)}
-                                    className="opacity-100 text-gray-500 hover:text-red-400 hover:bg-red-400/10 rounded transition-all px-2 py-1 outline-none mt-1 hover:scale-110"
+                                    className="opacity-100 text-gray-500 hover:text-red-400 rounded transition-all outline-none hover:scale-110 text-xs"
                                     title="Remove task"
                                 >
                                     ✕
@@ -80,14 +80,14 @@ export default function CurrentFocus() {
                 </ul>
 
                 {/* Add Task Form */}
-                <form onSubmit={handleSubmit} className="relative z-10">
+                <form onSubmit={handleSubmit} className="relative z-10 shrink-0 mt-auto">
                     <input
                         type="text"
                         value={inputValue}
                         onChange={(e) => setInputValue(e.target.value)}
                         disabled={isFull}
-                        placeholder={isFull ? "Focus on these 3 items first..." : "Add a focus task..."}
-                        className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 text-gray-100 placeholder-gray-300 focus:outline-none focus:border-blue-soft focus:ring-1 focus:ring-blue-soft transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        placeholder={isFull ? "Limit reached..." : "Add task..."}
+                        className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-xs text-gray-100 placeholder-gray-400 focus:outline-none focus:border-blue-soft focus:ring-1 focus:ring-blue-soft transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                 </form>
 

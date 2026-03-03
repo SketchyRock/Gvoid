@@ -109,53 +109,70 @@ export default function AmbientSound() {
     };
 
     return (
-        <div className="flex items-center gap-4 bg-gray-800/40 backdrop-blur-sm px-4 py-2 rounded-xl border border-gray-700/50 transition-all hover:bg-gray-800/60 hover:border-gray-600">
-            {/* Hidden YouTube Player Container */}
-            <div className="absolute opacity-0 pointer-events-none w-0 h-0 overflow-hidden">
-                <div ref={containerRef} />
-            </div>
+        <div className="w-full h-full transition-opacity duration-500 opacity-100 flex flex-col">
+            <div className="bg-gray-800 p-5 rounded-2xl border border-gray-700 shadow-xl relative overflow-hidden group h-full flex flex-col">
+                {/* Header */}
+                <div className="flex justify-between items-center mb-4 relative z-10 shrink-0">
+                    <h2 className="text-gray-300 text-[10px] uppercase tracking-[0.2em] font-semibold">
+                        Ambient Sound
+                    </h2>
+                </div>
 
-            {/* Play/Pause Button */}
-            <button
-                onClick={togglePlay}
-                disabled={!isReady}
-                className={`w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-sm
-                    ${!isReady ? 'bg-gray-700 text-gray-500 cursor-not-allowed' :
-                        isPlaying ? 'bg-blue-soft text-gray-900 hover:bg-blue-glow shadow-[0_0_12px_rgba(59,130,246,0.6)]' : 'bg-gray-700 text-gray-100 hover:bg-gray-600 hover:text-blue-soft'}`}
-                title={!isReady ? 'Loading...' : isPlaying ? 'Pause Audio' : 'Play Audio'}
-            >
-                {!isReady ? '⌛' : isPlaying ? '⏸' : '▶'}
-            </button>
+                {/* Hidden YouTube Player Container */}
+                <div className="absolute opacity-0 pointer-events-none w-0 h-0 overflow-hidden">
+                    <div ref={containerRef} />
+                </div>
 
-            {/* Track Selector */}
-            <div className="flex items-center gap-1.5 border-l border-gray-700/80 pl-4">
-                {SOUND_TRACKS.map(track => (
-                    <button
-                        key={track.id}
-                        onClick={() => handleTrackChange(track.id)}
-                        className={`text-xs px-2.5 py-1.5 rounded-md transition-all hover:-translate-y-0.5
-                            ${activeTrackId === track.id ? 'bg-gray-700 text-blue-soft font-medium shadow-sm' : 'text-gray-400 hover:text-gray-200 hover:bg-gray-700/50'}`}
-                    >
-                        {track.label}
-                    </button>
-                ))}
-            </div>
+                <div className="flex flex-col relative z-10 flex-1 justify-between">
+                    {/* Controls Row */}
+                    <div className="flex items-center gap-4">
+                        <button
+                            onClick={togglePlay}
+                            disabled={!isReady}
+                            className={`w-10 h-10 flex-shrink-0 rounded-full flex items-center justify-center transition-all hover:scale-105 shadow-sm text-sm
+                                ${!isReady ? 'bg-gray-700 text-gray-500 cursor-not-allowed' :
+                                    isPlaying ? 'bg-blue-soft text-gray-900 hover:bg-blue-glow shadow-[0_0_8px_rgba(59,130,246,0.6)]' : 'bg-gray-700 text-gray-100 hover:bg-gray-500 hover:text-blue-soft'}`}
+                            title={!isReady ? 'Loading...' : isPlaying ? 'Pause Audio' : 'Play Audio'}
+                        >
+                            {!isReady ? '⌛' : isPlaying ? '⏸' : '▶'}
+                        </button>
 
-            {/* Volume Control */}
-            <div className="flex items-center gap-2 border-l border-gray-700/80 pl-4 group">
-                <span className="text-xs text-gray-400 group-hover:scale-110 transition-transform cursor-default" title={`Volume: ${volume}%`}>
-                    {volume > 50 ? '🔊' : volume > 0 ? '🔉' : '🔈'}
-                </span>
-                <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    step="5"
-                    value={volume}
-                    onChange={(e) => setVolume(parseInt(e.target.value))}
-                    className="w-20 accent-blue-soft cursor-pointer hover:scale-[1.05] transition-transform opacity-70 hover:opacity-100"
-                    title={`Volume: ${volume}%`}
-                />
+                        <div className="flex-1">
+                            <div className="flex justify-between text-[9px] text-gray-500 mb-1 uppercase tracking-widest">
+                                <span>Volume</span>
+                                <span>{volume}%</span>
+                            </div>
+                            <div className="flex items-center gap-2 group/volume">
+                                <span className="text-[10px] text-gray-400 group-hover/volume:scale-110 transition-transform cursor-default">
+                                    {volume > 50 ? '🔊' : volume > 0 ? '🔉' : '🔈'}
+                                </span>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="100"
+                                    step="5"
+                                    value={volume}
+                                    onChange={(e) => setVolume(parseInt(e.target.value))}
+                                    className="w-full h-1 accent-blue-soft cursor-pointer transition-transform opacity-70 hover:opacity-100"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Track Selector */}
+                    <div className="grid grid-cols-3 gap-1.5 mt-4">
+                        {SOUND_TRACKS.map(track => (
+                            <button
+                                key={track.id}
+                                onClick={() => handleTrackChange(track.id)}
+                                className={`text-[10px] px-1 py-2 rounded-lg transition-all hover:-translate-y-0.5 leading-tight
+                                    ${activeTrackId === track.id ? 'bg-gray-700 text-blue-soft font-medium shadow-sm border border-gray-600' : 'text-gray-400 hover:text-gray-200 bg-gray-900/50 hover:bg-gray-700/50 border border-transparent'}`}
+                            >
+                                {track.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
             </div>
         </div>
     );
