@@ -258,4 +258,52 @@
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background-color: color-mix(in srgb, var(--color-blue-soft), transparent 50%);
   }
+
+  .glitch-effect {
+    animation: glitchAnim 0.15s cubic-bezier(.25, .46, .45, .94) both infinite;
+    position: relative;
+    z-index: 9999;
+  }
+
+  .glitch-blackout {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: black;
+    z-index: 10000;
+  }
+
+  @keyframes glitchAnim {
+    0% {
+      transform: translate(0) scale(1);
+      filter: hue-rotate(0deg) invert(0);
+    }
+
+    20% {
+      transform: translate(-10px, 10px) scale(1.02);
+      filter: hue-rotate(90deg) invert(0.2);
+    }
+
+    40% {
+      transform: translate(-10px, -10px) scale(0.98);
+      filter: hue-rotate(180deg) invert(0);
+    }
+
+    60% {
+      transform: translate(10px, 10px) scale(1.05);
+      filter: hue-rotate(270deg) invert(0.8);
+    }
+
+    80% {
+      transform: translate(10px, -10px) scale(0.95);
+      filter: hue-rotate(360deg) invert(1);
+    }
+
+    100% {
+      transform: translate(0) scale(1);
+      filter: hue-rotate(0deg) invert(0);
+    }
+  }
 }

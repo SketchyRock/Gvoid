@@ -140,6 +140,43 @@ export default function AmbientSound() {
         }
     };
 
+    // Terminal Commands Listener
+    useEffect(() => {
+        const handleTerminalMusicPlay = () => {
+            if (playerRef.current) {
+                playerRef.current.playVideo();
+                setIsPlaying(true);
+            }
+        };
+        const handleTerminalMusicPause = () => {
+            if (playerRef.current) {
+                playerRef.current.pauseVideo();
+                setIsPlaying(false);
+            }
+        };
+        const handleTerminalMusicSet = (e) => {
+            if (e.detail && e.detail.id) {
+                const track = SOUND_TRACKS.find(t => t.id === e.detail.id);
+                if (track && playerRef.current) {
+                    setActiveTrackId(track.id);
+                    playerRef.current.loadVideoById(track.videoId);
+                    playerRef.current.playVideo();
+                    setIsPlaying(true);
+                }
+            }
+        };
+
+        window.addEventListener('terminal-music-play', handleTerminalMusicPlay);
+        window.addEventListener('terminal-music-pause', handleTerminalMusicPause);
+        window.addEventListener('terminal-music-set', handleTerminalMusicSet);
+
+        return () => {
+            window.removeEventListener('terminal-music-play', handleTerminalMusicPlay);
+            window.removeEventListener('terminal-music-pause', handleTerminalMusicPause);
+            window.removeEventListener('terminal-music-set', handleTerminalMusicSet);
+        };
+    }, []);
+
     return (
         <div className="w-full h-full transition-opacity duration-500 opacity-100 flex flex-col">
             <div className="bg-gray-800 p-5 rounded-2xl border border-gray-700 shadow-xl relative overflow-hidden group h-full flex flex-col">

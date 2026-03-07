@@ -120,6 +120,30 @@ export default function useTimer(initialMode = 'FOCUS') {
         return () => clearInterval(intervalId);
     }, [isActive, timeLeft, mode, getDuration, settings, playAlarm, recordSession]);
 
+    // Terminal Commands Listener
+    useEffect(() => {
+        const handleTerminalPlay = () => setIsActive(true);
+        const handleTerminalPause = () => setIsActive(false);
+        const handleTerminalSkip = () => setTimeLeft(0);
+        const handleTerminalYield = (e) => {
+            if (e.detail && e.detail.minutes !== undefined) {
+                setTimeLeft(e.detail.minutes * 60);
+            }
+        };
+
+        window.addEventListener('terminal-play', handleTerminalPlay);
+        window.addEventListener('terminal-pause', handleTerminalPause);
+        window.addEventListener('terminal-skip', handleTerminalSkip);
+        window.addEventListener('terminal-yield', handleTerminalYield);
+
+        return () => {
+            window.removeEventListener('terminal-play', handleTerminalPlay);
+            window.removeEventListener('terminal-pause', handleTerminalPause);
+            window.removeEventListener('terminal-skip', handleTerminalSkip);
+            window.removeEventListener('terminal-yield', handleTerminalYield);
+        };
+    }, []);
+
     const toggleTimer = () => setIsActive(!isActive);
 
     const resetTimer = () => {

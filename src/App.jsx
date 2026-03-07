@@ -15,6 +15,7 @@ import { GameProvider } from './contexts/GameContext';
 import StatsPage from './components/stats/StatsPage';
 import GlobalXPBar from './components/layout/GlobalXPBar';
 import SplashScreen from './components/layout/SplashScreen';
+import Terminal from './components/layout/Terminal';
 
 const WIDGETS = {
   timer: <PomodoroTimer />,
@@ -34,6 +35,7 @@ const DEFAULT_LAYOUT = [
 export default function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isStatsOpen, setIsStatsOpen] = useState(false);
+  const [isTerminalOpen, setIsTerminalOpen] = useState(false);
   const containerRef = useRef(null);
   const [containerWidth, setContainerWidth] = useState(0);
 
@@ -120,9 +122,9 @@ export default function App() {
 
             {/* Top Header Controls */}
             <header className="flex items-center justify-between w-full max-w-7xl mx-auto px-6 py-3 animate-fade-in shrink-0 relative z-50">
-              <div className="flex items-center gap-3 group/brand">
+              <div className="flex items-center gap-3 group/brand cursor-pointer" onClick={() => setIsTerminalOpen(prev => !prev)}>
                 <img src="/gvoid-logo.svg" alt="Gvoid Logo" className="w-8 h-8 group-hover/brand:scale-110 transition-transform duration-500 group-hover/brand:drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
-                <h1 className="text-2xl font-black tracking-tighter cursor-default bg-gradient-to-r from-blue-soft via-purple-soft to-blue-soft bg-[length:200%_auto] bg-left group-hover/brand:bg-right bg-clip-text text-transparent transition-all duration-500 group-hover/brand:scale-105 group-hover/brand:drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]">
+                <h1 className="text-2xl font-black tracking-tighter bg-gradient-to-r from-blue-soft via-purple-soft to-blue-soft bg-[length:200%_auto] bg-left group-hover/brand:bg-right bg-clip-text text-transparent transition-all duration-500 group-hover/brand:scale-105 group-hover/brand:drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]">
                   Gvoid
                 </h1>
                 <a
@@ -199,6 +201,7 @@ export default function App() {
               isOpen={isStatsOpen}
               onClose={() => setIsStatsOpen(false)}
             />
+            <Terminal isOpen={isTerminalOpen} onClose={() => setIsTerminalOpen(false)} />
           </div>
         </SettingsProvider>
       </GameProvider>
