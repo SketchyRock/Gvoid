@@ -4,10 +4,10 @@ Start website on local host:
 
 
 features to add:
-- add more stimulating visuals, possibly an afk thing or game that plays in the background
-    - desktop rpg that can only be progressed when study timer stops, afk while study timer is active
 - small cli tool to enter commands instead of using the ui
-- add more themes
+- implement a splash screen for newcommers to the site
+- add a reset option in the statistics section that resets game and statistics data
+- add a cosmetic shop to spend void matter on
 
 TODO:
 -

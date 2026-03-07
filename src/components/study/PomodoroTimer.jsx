@@ -2,6 +2,7 @@ import React from 'react';
 import useTimer, { MODES } from '../../hooks/useTimer';
 import { useSettings } from '../../contexts/SettingsContext';
 import useSound from '../../hooks/useSound';
+import { useGame } from '../../contexts/GameContext';
 
 export default function PomodoroTimer() {
     const { settings } = useSettings();
@@ -14,6 +15,11 @@ export default function PomodoroTimer() {
         changeMode
     } = useTimer();
     const { playClick } = useSound();
+    const { setTimerActive } = useGame();
+
+    React.useEffect(() => {
+        setTimerActive(isActive);
+    }, [isActive, setTimerActive]);
 
     const handleToggle = () => {
         playClick();

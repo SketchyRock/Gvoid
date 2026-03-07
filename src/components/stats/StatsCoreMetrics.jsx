@@ -1,12 +1,31 @@
 import React from 'react';
 import { useStats } from '../../contexts/StatsContext';
+import { useGame } from '../../contexts/GameContext';
 
 export default function StatsCoreMetrics({ onSelectMetric }) {
     const { metrics, stats } = useStats();
+    const { level, xp, voidMatter } = useGame();
 
     return (
         <div className="flex flex-col gap-6 animate-fade-in">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-blue-soft border-b border-gray-700 pb-2">Core Metrics</h3>
+            {/* Game Stats */}
+            <h3 className="text-xs font-bold uppercase tracking-widest text-blue-soft border-b border-gray-700 pb-2">Interstellar Log</h3>
+            <div className="grid grid-cols-3 gap-4">
+                <div className="bg-gray-900 border border-gray-700 rounded-xl p-4 flex flex-col items-center justify-center relative shadow-inner text-center w-full h-full">
+                    <span className="text-3xl font-light text-blue-soft mb-1 tabular-nums transition-transform hover:scale-110">{level || 1}</span>
+                    <span className="text-[10px] uppercase tracking-widest text-gray-400 mt-1">Core Level</span>
+                </div>
+                <div className="bg-gray-900 border border-gray-700 rounded-xl p-4 flex flex-col items-center justify-center relative shadow-inner text-center w-full h-full">
+                    <span className="text-3xl font-light text-purple-soft mb-1 tabular-nums transition-transform hover:scale-110">{isNaN(xp) ? 0 : Math.floor(xp)}</span>
+                    <span className="text-[10px] uppercase tracking-widest text-gray-400 mt-1">Life XP</span>
+                </div>
+                <div className="bg-gray-900 border border-gray-700 rounded-xl p-4 flex flex-col items-center justify-center relative shadow-inner text-center w-full h-full">
+                    <span className="text-3xl font-light text-teal-400 mb-1 tabular-nums transition-transform hover:scale-110">{voidMatter || 0}</span>
+                    <span className="text-[10px] uppercase tracking-widest text-gray-400 mt-1">Void Matter</span>
+                </div>
+            </div>
+
+            <h3 className="text-xs font-bold uppercase tracking-widest text-blue-soft border-b border-gray-700 pb-2 mt-2">Core Metrics</h3>
             <div className="grid grid-cols-3 gap-4">
                 <button
                     onClick={() => onSelectMetric('totalFocus')}
