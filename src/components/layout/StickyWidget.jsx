@@ -7,7 +7,7 @@ const StickyWidget = forwardRef(({ id, children, className, style, onMouseDown, 
         <div
             ref={ref}
             className={`relative group w-full h-full flex flex-col justify-start rounded-2xl transition-shadow hover:shadow-2xl ${className || ''}`}
-            style={{ ...style, touchAction: 'none' }} // prevent scrolling while dragging on touch devices
+            style={{ ...style }} // Removed global touchAction: 'none' to re-enable page scrolling
             {...props}
         >
             {/* Drag Handle - Restricted to this button to prevent accidental drags
@@ -15,6 +15,7 @@ const StickyWidget = forwardRef(({ id, children, className, style, onMouseDown, 
             <div
                 className="drag-handle absolute -top-2 -left-2 z-50 p-1.5 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg hover:bg-gray-800 bg-gray-900 border border-gray-700 shadow-md"
                 title="Drag to move"
+                style={{ touchAction: 'none' }} // Constrain drag touch blocking strictly to the handle
                 onMouseDown={onMouseDown}
                 onMouseUp={onMouseUp}
                 onTouchStart={onTouchStart}

@@ -98,16 +98,15 @@ export default function AmbientSound() {
     useEffect(() => {
         if (!playerRef.current || !isReady) return;
 
-        // Skip the initial load on mount to prevent blocked autoplay issues.
-        // The YouTube player is already initialized with the default videoId.
+        // Note: we're no longer automatically calling playVideo here on track change
+        // because mobile requires synchronous playback triggered by user gesture.
+        // We load the video, and the synchronous click handler will handle playing.
+
+        // However, if we're not on initial load and actively playing,
+        // the click handler for track change will play it.
         if (isInitialLoad.current) {
             isInitialLoad.current = false;
-            return;
         }
-
-        // Load and play the new video automatically when a user selects a different track
-        playerRef.current.loadVideoById(activeTrack.videoId);
-        setIsPlaying(true);
 
     }, [activeTrack.videoId, isReady]);
 
@@ -115,13 +114,30 @@ export default function AmbientSound() {
 
     const togglePlay = () => {
         playClick();
-        setIsPlaying(!isPlaying);
+        if (!playerRef.current) return;
+
+        if (isPlaying) {
+            playerRef.current.pauseVideo();
+            setIsPlaying(false);
+        } else {
+            playerRef.current.playVideo();
+            setIsPlaying(true);
+        }
     };
 
     const handleTrackChange = (id) => {
         playClick();
         setActiveTrackId(id);
         setIsMenuOpen(false);
+
+        if (playerRef.current) {
+            const track = SOUND_TRACKS.find(t => t.id === id);
+            if (track) {
+                playerRef.current.loadVideoById(track.videoId);
+                playerRef.current.playVideo();
+                setIsPlaying(true);
+            }
+        }
     };
 
     return (

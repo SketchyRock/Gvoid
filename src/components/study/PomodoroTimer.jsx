@@ -60,7 +60,7 @@ export default function PomodoroTimer() {
                         </h1>
                         {/* Play/Pause Indicator (always visible) */}
                         <div className={`mt-1 text-xs transition-all duration-300 group-hover/timer:scale-105 ${isActive ? 'opacity-100 text-gray-400 group-hover/timer:text-gray-200' : 'opacity-100 text-blue-soft group-hover/timer:text-blue-glow'}`}>
-                            {isActive ? 'Click to Pause' : 'Click to Start'}
+                            {isActive ? 'Tap to Pause' : 'Tap to Start'}
                         </div>
                     </button>
                 </div>

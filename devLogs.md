@@ -3,11 +3,8 @@ Start website on local host:
 - npm run *dev* (start website on local host *dev allows changes to be seen in real time*)
 
 
-features to add:
+TODO:
 - small cli tool to enter commands instead of using the ui
 - add a reset option in the statistics section that resets game and statistics data
 - add a cosmetic shop to spend void matter on
 - clean up the repository
-
-TODO:
--
