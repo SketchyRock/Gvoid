@@ -14,6 +14,7 @@ import { StatsProvider } from './contexts/StatsContext';
 import { GameProvider } from './contexts/GameContext';
 import StatsPage from './components/stats/StatsPage';
 import GlobalXPBar from './components/layout/GlobalXPBar';
+import SplashScreen from './components/layout/SplashScreen';
 
 const WIDGETS = {
   timer: <PomodoroTimer />,
@@ -115,6 +116,7 @@ export default function App() {
       <GameProvider>
         <SettingsProvider>
           <div className="h-screen flex flex-col bg-gray-900 text-gray-100 transition-colors duration-700 ease-in-out font-sans overflow-hidden">
+            <SplashScreen />
 
             {/* Top Header Controls */}
             <header className="flex items-center justify-between w-full max-w-7xl mx-auto px-6 py-3 animate-fade-in shrink-0 relative z-50">
