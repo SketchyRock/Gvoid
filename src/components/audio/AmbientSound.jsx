@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import useSound from '../../hooks/useSound';
 
 const SOUND_TRACKS = [
-    // Lofi Girl live stream
-    { id: 'lofi', label: 'Lo-Fi Chill', videoId: 'jfKfPfyJRdk' },
-    // 10 hours of heavy rain
-    { id: 'rain', label: 'Heavy Rain', videoId: 'mPZkdNFkNps' },
-    // 12 hours of deep brown noise
-    { id: 'brown', label: 'Brown Noise', videoId: 'RqzGzwTY-6w' }
+    { id: 'lofi', label: 'Lo-Fi', videoId: 'jfKfPfyJRdk', desc: 'Study' },
+    { id: 'rain', label: 'Rain', videoId: 'mPZkdNFkNps', desc: 'Ambient' },
+    { id: 'brown', label: 'Brown', videoId: 'RqzGzwTY-6w', desc: 'Focus' },
+    { id: 'deep-house', label: 'House', videoId: 'p_VVk6QySMU', desc: 'Flow' },
+    { id: 'breakcore', label: 'Break', videoId: 'ngsOzD_WqL8', desc: 'Crank' },
+    { id: 'fogcore', label: 'Fog', videoId: 'co403gTZScc', desc: 'Dark' }
 ];
 
 export default function AmbientSound() {
@@ -145,7 +145,7 @@ export default function AmbientSound() {
                         <button
                             onClick={togglePlay}
                             disabled={!isReady}
-                            className={`w-10 h-10 flex-shrink-0 rounded-full flex items-center justify-center transition-all hover:scale-105 shadow-sm text-sm
+                            className={`w-10 h-10 flex-shrink-0 rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-sm text-sm
                                 ${!isReady ? 'bg-gray-700 text-gray-500 cursor-not-allowed' :
                                     isPlaying ? 'bg-blue-soft text-gray-900 hover:bg-blue-glow shadow-[0_0_8px_rgba(59,130,246,0.6)]' : 'bg-gray-700 text-gray-100 hover:bg-gray-500 hover:text-blue-soft'}`}
                             title={!isReady ? 'Loading...' : isPlaying ? 'Pause Audio' : 'Play Audio'}
@@ -176,15 +176,23 @@ export default function AmbientSound() {
                     </div>
 
                     {/* Track Selector */}
-                    <div className="grid grid-cols-3 gap-1.5 mt-4">
+                    <div className="grid grid-cols-3 gap-1.5 mt-3">
                         {SOUND_TRACKS.map(track => (
                             <button
                                 key={track.id}
                                 onClick={() => handleTrackChange(track.id)}
-                                className={`text-[10px] px-1 py-2 rounded-lg transition-all hover:-translate-y-0.5 leading-tight
-                                    ${activeTrackId === track.id ? 'bg-gray-700 text-blue-soft font-medium shadow-sm border border-gray-600' : 'text-gray-400 hover:text-gray-200 bg-gray-900/50 hover:bg-gray-700/50 border border-transparent'}`}
+                                className={`flex flex-col items-center justify-center py-1.5 px-0.5 rounded-lg transition-all hover:-translate-y-0.5 group/btn
+                                    ${activeTrackId === track.id
+                                        ? 'bg-gray-700 text-blue-soft shadow-md border border-gray-600 ring-1 ring-blue-soft/20'
+                                        : 'text-gray-400 hover:text-gray-200 bg-gray-900/40 hover:bg-gray-700/50 border border-transparent'}`}
                             >
-                                {track.label}
+                                <span className="text-[9px] font-bold tracking-tighter leading-none mb-0.5">
+                                    {track.label}
+                                </span>
+                                <span className={`text-[7px] uppercase tracking-tighter opacity-50 group-hover/btn:opacity-100 transition-opacity
+                                    ${activeTrackId === track.id ? 'text-blue-soft/80' : 'text-gray-500'}`}>
+                                    {track.desc}
+                                </span>
                             </button>
                         ))}
                     </div>

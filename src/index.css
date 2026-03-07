@@ -110,3 +110,22 @@
   border-bottom: 2px solid var(--color-blue-soft) !important;
   border-radius: 0 0 2px 0 !important;
 }
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply rounded-full transition-colors;
+    background-color: color-mix(in srgb, var(--color-gray-700), transparent 50%);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(in srgb, var(--color-blue-soft), transparent 50%);
+  }
+}

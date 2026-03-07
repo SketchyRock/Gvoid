@@ -8,7 +8,6 @@ features to add:
     - desktop rpg that can only be progressed when study timer stops, afk while study timer is active
 - small cli tool to enter commands instead of using the ui
 - add more themes
-- add more music
 
 TODO:
 -
