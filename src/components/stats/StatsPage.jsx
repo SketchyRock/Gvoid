@@ -4,10 +4,12 @@ import Heatmap from './Heatmap';
 import StatsCoreMetrics from './StatsCoreMetrics';
 import MetricDetailView from './MetricDetailView';
 import { useStats } from '../../contexts/StatsContext';
+import { useGame } from '../../contexts/GameContext';
 
 export default function StatsPage({ isOpen, onClose }) {
     const { playClick } = useSound();
-    const { stats } = useStats();
+    const { stats, resetStats } = useStats();
+    const { resetGame } = useGame();
     const [activeMetric, setActiveMetric] = useState(null);
 
     if (!isOpen) return null;
@@ -21,6 +23,20 @@ export default function StatsPage({ isOpen, onClose }) {
     const handleSelectMetric = (metricId) => {
         playClick();
         setActiveMetric(metricId);
+    };
+
+    const handleResetStats = () => {
+        playClick();
+        if (window.confirm('Reset all focus statistics? This cannot be undone and will empty your focus log and milestones.')) {
+            resetStats();
+        }
+    };
+
+    const handleResetGame = () => {
+        playClick();
+        if (window.confirm('Reset all game progress? This cannot be undone and will reset your level, XP, and Void Matter.')) {
+            resetGame();
+        }
     };
 
     return (
@@ -59,6 +75,32 @@ export default function StatsPage({ isOpen, onClose }) {
                         </div>
                     )}
                 </div>
+
+                {/* Footer */}
+                {!activeMetric && (
+                    <div className="p-6 border-t border-gray-700 bg-gray-800/50 flex flex-wrap justify-between gap-4">
+                        <div className="flex gap-4">
+                            <button
+                                onClick={handleResetStats}
+                                className="text-xs text-gray-400 hover:text-red-400 transition-colors uppercase tracking-widest font-bold"
+                            >
+                                Reset Statistics
+                            </button>
+                            <button
+                                onClick={handleResetGame}
+                                className="text-xs text-gray-400 hover:text-red-400 transition-colors uppercase tracking-widest font-bold"
+                            >
+                                Reset Game
+                            </button>
+                        </div>
+                        <button
+                            onClick={handleClose}
+                            className="px-6 py-2 bg-purple-soft hover:bg-purple-800 text-white rounded-lg font-medium transition-all transform active:scale-95"
+                        >
+                            Close Log
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -5,6 +5,5 @@ Start website on local host:
 
 TODO:
 - small cli tool to enter commands instead of using the ui
-- add a reset option in the statistics section that resets game and statistics data
 - add a cosmetic shop to spend void matter on
 - clean up the repository

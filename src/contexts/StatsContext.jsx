@@ -159,10 +159,15 @@ export const StatsProvider = ({ children }) => {
         }
     };
 
+    const resetStats = () => {
+        setStats(DEFAULT_STATS);
+    };
+
     return (
         <StatsContext.Provider value={{
             stats,
             recordSession,
+            resetStats,
             metrics: {
                 totalFocusHours,
                 avgSessionLength,

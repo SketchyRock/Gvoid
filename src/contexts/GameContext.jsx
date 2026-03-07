@@ -82,12 +82,17 @@ export const GameProvider = ({ children }) => {
 
     const xpNeededForCurrentLevel = calculateXpNeeded(gameState.level);
 
+    const resetGame = () => {
+        setGameState(DEFAULT_STATE);
+    };
+
     return (
         <GameContext.Provider value={{
             ...gameState,
             xpNeeded: xpNeededForCurrentLevel,
             isTimerActive,
-            setTimerActive: setIsTimerActive
+            setTimerActive: setIsTimerActive,
+            resetGame
         }}>
             {children}
         </GameContext.Provider>
