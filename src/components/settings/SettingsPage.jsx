@@ -170,6 +170,16 @@ export default function SettingsPage({ isOpen, onClose, onResetLayouts }) {
                                     <option value="clean-minimalist">Clean Minimalist (Blue & Light Grey)</option>
                                     <option value="solar-retro">Solar Retro (Yellow/Orange & Brown)</option>
                                     <option value="evergreen-forest">Evergreen Forest (Green & Slate)</option>
+                                    <option value="event-horizon">Event Horizon (OLED Black & Purple)</option>
+                                    <option value="solar-flare">Solar Flare (Dark & Amber)</option>
+                                    <option value="deep-sea-vent">Deep Sea Vent (Black & Cyan/Green)</option>
+                                    <option value="nebula-mist">Nebula Mist (Indigo & Lavender)</option>
+                                    <option value="retro-terminal">Retro Terminal (Matrix Green)</option>
+                                    <option value="supernova">Supernova (Plum & Gold)</option>
+                                    <option value="void-glitch">Void Glitch (Cyber Red & Yellow)</option>
+                                    <option value="stardust">Stardust (Navy & White/Gold)</option>
+                                    <option value="cyber-punk">Cyber-Punk (Neon Pink & Blue)</option>
+                                    <option value="frozen-moon">Frozen Moon (Arctic Blue & Slate)</option>
                                 </select>
                             </div>
                             <div className="flex items-center justify-between">
