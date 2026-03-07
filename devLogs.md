@@ -6,14 +6,9 @@ Start website on local host:
 features to add:
 - add more stimulating visuals, possibly an afk thing or game that plays in the background
     - desktop rpg that can only be progressed when study timer stops, afk while study timer is active
-- study statistics
-- make the website more flexible, allow user to move components around the screen.
-- github commit map feature
 - small cli tool to enter commands instead of using the ui
+- add more themes
+- add more music
 
 TODO:
-- fix dragging issue **fixed**
-- music starts playing but **fixed**
-- fix sound affect audio issue **fixed**
-- add statistics
-- add more themes
+-

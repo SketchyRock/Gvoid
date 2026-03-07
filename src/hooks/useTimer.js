@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSettings } from '../contexts/SettingsContext';
+import { useStats } from '../contexts/StatsContext';
 import useSound from './useSound';
 
 export const MODES = {
@@ -9,6 +10,7 @@ export const MODES = {
 
 export default function useTimer(initialMode = 'FOCUS') {
     const { settings } = useSettings();
+    const { recordSession } = useStats();
     const { playAlarm } = useSound();
     const [mode, setMode] = useState(initialMode);
     const [isActive, setIsActive] = useState(false);
@@ -16,6 +18,10 @@ export default function useTimer(initialMode = 'FOCUS') {
     // Derived configuration based on settings
     const [timeLeft, setTimeLeft] = useState(settings.pomodoroLength * 60);
     const [sessionsCompleted, setSessionsCompleted] = useState(0);
+
+    // Void Stability tracking
+    const offTabTimeStr = useRef(0); // in ms
+    const lastBlurTime = useRef(null);
 
     // Get current mode duration
     const getDuration = useCallback((currentMode) => {
@@ -41,6 +47,34 @@ export default function useTimer(initialMode = 'FOCUS') {
         return () => { document.title = 'Gvoid'; };
     }, [timeLeft, mode, settings.timerInTitle]);
 
+    // Void Stability visibility listener
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (mode !== MODES.FOCUS || !isActive) return;
+
+            if (document.hidden) {
+                lastBlurTime.current = Date.now();
+            } else {
+                if (lastBlurTime.current) {
+                    offTabTimeStr.current += (Date.now() - lastBlurTime.current);
+                    lastBlurTime.current = null;
+                }
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    }, [mode, isActive]);
+
+    // Cleanup blur time when paused
+    useEffect(() => {
+        if (!isActive && lastBlurTime.current) {
+            offTabTimeStr.current += (Date.now() - lastBlurTime.current);
+            lastBlurTime.current = null;
+        }
+    }, [isActive]);
+
+
     // The main timer loop
     useEffect(() => {
         let intervalId = null;
@@ -56,6 +90,22 @@ export default function useTimer(initialMode = 'FOCUS') {
 
             if (mode === MODES.FOCUS) {
                 setSessionsCompleted(prev => prev + 1);
+
+                // Calculate efficiency
+                if (lastBlurTime.current) {
+                    offTabTimeStr.current += (Date.now() - lastBlurTime.current);
+                    lastBlurTime.current = null;
+                }
+
+                const totalDurationMs = getDuration(MODES.FOCUS) * 1000;
+                let efficiency = 100 - ((offTabTimeStr.current / totalDurationMs) * 100);
+                efficiency = Math.max(0, Math.min(100, efficiency)); // Bound between 0 and 100
+
+                // Record session
+                recordSession(getDuration(MODES.FOCUS) / 60, efficiency);
+
+                // Reset stats for next focus
+                offTabTimeStr.current = 0;
             }
 
             setMode(newMode);
@@ -68,7 +118,7 @@ export default function useTimer(initialMode = 'FOCUS') {
         }
 
         return () => clearInterval(intervalId);
-    }, [isActive, timeLeft, mode, getDuration, settings, playAlarm]);
+    }, [isActive, timeLeft, mode, getDuration, settings, playAlarm, recordSession]);
 
     const toggleTimer = () => setIsActive(!isActive);
 
@@ -81,6 +131,10 @@ export default function useTimer(initialMode = 'FOCUS') {
         setMode(newMode);
         setIsActive(false);
         setTimeLeft(getDuration(newMode));
+        if (newMode === MODES.FOCUS) {
+            offTabTimeStr.current = 0;
+            lastBlurTime.current = null;
+        }
     };
 
     // Format MM:SS
