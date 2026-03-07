@@ -1,9 +1,11 @@
 import { useState, useCallback } from 'react';
+import useSound from './useSound';
 
 export const MAX_TASKS = 3;
 
 export default function useTasks(initialTasks = []) {
     const [tasks, setTasks] = useState(initialTasks);
+    const { playTaskDone } = useSound();
 
     // Add a new task if under the limit
     const addTask = useCallback((text) => {
@@ -25,11 +27,16 @@ export default function useTasks(initialTasks = []) {
     // Toggle completion status
     const toggleTask = useCallback((id) => {
         setTasks(prevTasks =>
-            prevTasks.map(task =>
-                task.id === id ? { ...task, completed: !task.completed } : task
-            )
+            prevTasks.map(task => {
+                const isMatchingTask = task.id === id;
+                if (isMatchingTask && !task.completed) {
+                    // Task transition from Active -> Completed
+                    playTaskDone();
+                }
+                return isMatchingTask ? { ...task, completed: !task.completed } : task;
+            })
         );
-    }, []);
+    }, [playTaskDone]);
 
     // Remove a task entirely
     const removeTask = useCallback((id) => {

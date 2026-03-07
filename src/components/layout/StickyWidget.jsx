@@ -10,9 +10,8 @@ const StickyWidget = forwardRef(({ id, children, className, style, onMouseDown, 
             style={{ ...style, touchAction: 'none' }} // prevent scrolling while dragging on touch devices
             {...props}
         >
-            {/* Drag Handle - react-grid-layout uses a specific class if configured,
-                or the whole block can be draggable. We'll make the whole block draggable
-                but add a visual indicator. */}
+            {/* Drag Handle - Restricted to this button to prevent accidental drags
+                when interacting with internal widget controls like sliders. */}
             <div
                 className="drag-handle absolute -top-2 -left-2 z-50 p-1.5 cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg hover:bg-gray-800 bg-gray-900 border border-gray-700 shadow-md"
                 title="Drag to move"

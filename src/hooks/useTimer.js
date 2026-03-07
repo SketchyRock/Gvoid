@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useSettings } from '../contexts/SettingsContext';
+import useSound from './useSound';
 
 export const MODES = {
     FOCUS: 'FOCUS',
@@ -8,6 +9,7 @@ export const MODES = {
 
 export default function useTimer(initialMode = 'FOCUS') {
     const { settings } = useSettings();
+    const { playAlarm } = useSound();
     const [mode, setMode] = useState(initialMode);
     const [isActive, setIsActive] = useState(false);
 
@@ -49,11 +51,11 @@ export default function useTimer(initialMode = 'FOCUS') {
             }, 1000);
         } else if (timeLeft === 0 && isActive) {
             // Timer finished!
+            playAlarm();
             const newMode = mode === MODES.FOCUS ? MODES.BREAK : MODES.FOCUS;
 
             if (mode === MODES.FOCUS) {
                 setSessionsCompleted(prev => prev + 1);
-                // Trigger Alarm logic would go here
             }
 
             setMode(newMode);
@@ -66,7 +68,7 @@ export default function useTimer(initialMode = 'FOCUS') {
         }
 
         return () => clearInterval(intervalId);
-    }, [isActive, timeLeft, mode, getDuration, settings]);
+    }, [isActive, timeLeft, mode, getDuration, settings, playAlarm]);
 
     const toggleTimer = () => setIsActive(!isActive);
 

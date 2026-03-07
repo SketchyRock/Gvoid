@@ -1,6 +1,7 @@
 import React from 'react';
 import useTimer, { MODES } from '../../hooks/useTimer';
 import { useSettings } from '../../contexts/SettingsContext';
+import useSound from '../../hooks/useSound';
 
 export default function PomodoroTimer() {
     const { settings } = useSettings();
@@ -12,6 +13,17 @@ export default function PomodoroTimer() {
         toggleTimer,
         changeMode
     } = useTimer();
+    const { playClick } = useSound();
+
+    const handleToggle = () => {
+        playClick();
+        toggleTimer();
+    };
+
+    const handleChangeMode = (newMode) => {
+        playClick();
+        changeMode(newMode);
+    };
 
     // If in a break, use a softer color to indicate rest phase
     const isFocus = mode === MODES.FOCUS;
@@ -33,7 +45,7 @@ export default function PomodoroTimer() {
                 <div className="text-center w-full relative z-10 flex-1 flex flex-col justify-center">
                     {/* Main Timer Display */}
                     <button
-                        onClick={toggleTimer}
+                        onClick={handleToggle}
                         className={`w-full group/timer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-soft rounded-2xl transition-transform active:scale-95 py-2`}
                         title={isActive ? "Pause Timer" : "Start Timer"}
                     >
@@ -50,14 +62,14 @@ export default function PomodoroTimer() {
                 {/* Quick Toggle Controls */}
                 <div className="flex justify-center gap-6 text-xs transition-opacity duration-500 opacity-100 relative z-10">
                     <button
-                        onClick={() => changeMode(MODES.FOCUS)}
+                        onClick={() => handleChangeMode(MODES.FOCUS)}
                         className={`transition-colors flex flex-col items-center gap-1 ${isFocus ? 'text-blue-soft font-medium' : 'text-gray-300 hover:text-gray-100'}`}
                     >
                         <span>Focus</span>
                         {isFocus && <div className="w-1/2 h-0.5 bg-blue-soft rounded-full -mt-1 animate-fade-in" />}
                     </button>
                     <button
-                        onClick={() => changeMode(MODES.BREAK)}
+                        onClick={() => handleChangeMode(MODES.BREAK)}
                         className={`transition-colors flex flex-col items-center gap-1 ${!isFocus ? 'text-blue-soft font-medium' : 'text-gray-300 hover:text-gray-100'}`}
                     >
                         <span>Break</span>

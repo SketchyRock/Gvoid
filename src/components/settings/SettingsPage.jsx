@@ -1,24 +1,34 @@
 import React from 'react';
 import { useSettings } from '../../contexts/SettingsContext';
+import useSound from '../../hooks/useSound';
 
 export default function SettingsPage({ isOpen, onClose, onResetLayouts }) {
     const { settings, updateSettings, resetToDefaults } = useSettings();
+    const { playClick } = useSound();
 
     if (!isOpen) return null;
 
     const handleToggle = (key) => {
+        playClick();
         updateSettings({ [key]: !settings[key] });
     };
 
     const handleChange = (key, value) => {
+        playClick();
         updateSettings({ [key]: value });
     };
 
     const handleReset = () => {
+        playClick();
         if (window.confirm('Reset all settings and widget positions to default?')) {
             resetToDefaults();
             if (onResetLayouts) onResetLayouts();
         }
+    };
+
+    const handleClose = () => {
+        playClick();
+        onClose();
     };
 
     return (
@@ -28,7 +38,7 @@ export default function SettingsPage({ isOpen, onClose, onResetLayouts }) {
                 <div className="p-6 border-b border-gray-700 flex justify-between items-center">
                     <h2 className="text-xl font-semibold tracking-tight">Settings</h2>
                     <button
-                        onClick={onClose}
+                        onClick={handleClose}
                         className="p-2 hover:bg-gray-700 rounded-full transition-colors text-gray-400 hover:text-white"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -214,7 +224,7 @@ export default function SettingsPage({ isOpen, onClose, onResetLayouts }) {
                         Reset to Defaults
                     </button>
                     <button
-                        onClick={onClose}
+                        onClick={handleClose}
                         className="px-6 py-2 bg-blue-soft hover:bg-blue-glow text-white rounded-lg font-medium transition-all transform active:scale-95"
                     >
                         Save Changes

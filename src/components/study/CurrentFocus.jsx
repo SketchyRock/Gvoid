@@ -1,16 +1,29 @@
 import React, { useState } from 'react';
 import useTasks, { MAX_TASKS } from '../../hooks/useTasks';
+import useSound from '../../hooks/useSound';
 
 export default function CurrentFocus() {
     const { tasks, addTask, toggleTask, removeTask, clearCompleted, isFull } = useTasks([]);
+    const { playClick } = useSound();
 
     const [inputValue, setInputValue] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (addTask(inputValue)) {
+            playClick();
             setInputValue('');
         }
+    };
+
+    const handleClear = () => {
+        playClick();
+        clearCompleted();
+    };
+
+    const handleRemove = (id) => {
+        playClick();
+        removeTask(id);
     };
 
     const hasCompletedTasks = tasks.some(t => t.completed);
@@ -29,7 +42,7 @@ export default function CurrentFocus() {
                     {/* Clear button */}
                     {hasCompletedTasks && (
                         <button
-                            onClick={clearCompleted}
+                            onClick={handleClear}
                             className="text-[10px] text-gray-400 hover:text-blue-soft transition-all hover:scale-105 focus:outline-none focus:ring-1 focus:ring-blue-soft rounded px-1"
                         >
                             Clear
@@ -68,7 +81,7 @@ export default function CurrentFocus() {
 
                                 {/* Delete Button */}
                                 <button
-                                    onClick={() => removeTask(task.id)}
+                                    onClick={() => handleRemove(task.id)}
                                     className="opacity-100 text-gray-500 hover:text-red-400 rounded transition-all outline-none hover:scale-110 text-xs"
                                     title="Remove task"
                                 >

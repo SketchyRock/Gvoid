@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import useSound from '../../hooks/useSound';
 
 const SOUND_TRACKS = [
     // Lofi Girl live stream
@@ -91,19 +92,34 @@ export default function AmbientSound() {
         playerRef.current.setVolume(volume);
     }, [volume, isReady]);
 
+    const isInitialLoad = useRef(true);
+
     // Handle Track changes
     useEffect(() => {
         if (!playerRef.current || !isReady) return;
 
-        // Load and play the new video
+        // Skip the initial load on mount to prevent blocked autoplay issues.
+        // The YouTube player is already initialized with the default videoId.
+        if (isInitialLoad.current) {
+            isInitialLoad.current = false;
+            return;
+        }
+
+        // Load and play the new video automatically when a user selects a different track
         playerRef.current.loadVideoById(activeTrack.videoId);
         setIsPlaying(true);
 
     }, [activeTrack.videoId, isReady]);
 
-    const togglePlay = () => setIsPlaying(!isPlaying);
+    const { playClick } = useSound();
+
+    const togglePlay = () => {
+        playClick();
+        setIsPlaying(!isPlaying);
+    };
 
     const handleTrackChange = (id) => {
+        playClick();
         setActiveTrackId(id);
         setIsMenuOpen(false);
     };

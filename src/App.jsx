@@ -158,11 +158,9 @@ export default function App() {
                 maxH={2}                 // Prevent any widget from being taller than 2 units
               >
                 {Object.keys(WIDGETS).map(key => (
-                  <div key={key}>
-                    <StickyWidget id={key}>
-                      {WIDGETS[key]}
-                    </StickyWidget>
-                  </div>
+                  <StickyWidget key={key} id={key}>
+                    {WIDGETS[key]}
+                  </StickyWidget>
                 ))}
               </ResponsiveGridLayout>
             )}
