@@ -17,6 +17,7 @@ import GlobalXPBar from './components/layout/GlobalXPBar';
 import SplashScreen from './components/layout/SplashScreen';
 import Terminal from './components/layout/Terminal';
 import NavMenu from './components/layout/NavMenu';
+import ModulesModal from './components/layout/ModulesModal';
 
 const WIDGETS = {
   timer: <PomodoroTimer />,
@@ -25,7 +26,7 @@ const WIDGETS = {
   void: <VoidStickyNote />
 };
 
-// Initial default layout for the grid
+// Initial default layout for the grid - constrained to 3 columns and 2 rows (6 total spots)
 const DEFAULT_LAYOUT = [
   { i: 'timer', x: 0, y: 0, w: 1, h: 1, maxH: 2, maxW: 2 },
   { i: 'audio', x: 1, y: 0, w: 1, h: 1, maxH: 2, maxW: 2 },
@@ -37,21 +38,97 @@ export default function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isStatsOpen, setIsStatsOpen] = useState(false);
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const [isModulesOpen, setIsModulesOpen] = useState(false);
   const containerRef = useRef(null);
   const [containerWidth, setContainerWidth] = useState(0);
+
+  // Widget active state persistence
+  const [activeModules, setActiveModules] = useState(() => {
+    const saved = localStorage.getItem('gvoid_active_modules');
+    if (saved) {
+      return JSON.parse(saved);
+    }
+    return { timer: true, audio: true, tasks: true, void: true };
+  });
+  const toggleModule = (key) => {
+    setActiveModules(prev => {
+      const isEnabling = !prev[key];
+      const activeCount = Object.values(prev).filter(Boolean).length;
+
+      if (isEnabling && activeCount >= 6) {
+        return prev;
+      }
+
+      const next = { ...prev, [key]: !prev[key] };
+      localStorage.setItem('gvoid_active_modules', JSON.stringify(next));
+
+      if (isEnabling) {
+        setLayouts(prevLayouts => {
+          const nextLayouts = { ...prevLayouts };
+          const breakpoints = ['lg', 'md', 'sm', 'xs', 'xxs'];
+          const colsMap = { lg: 3, md: 3, sm: 2, xs: 1, xxs: 1 };
+
+          breakpoints.forEach(bp => {
+            const currentBpLayout = prevLayouts[bp] || [];
+            const cols = colsMap[bp];
+            const maxRows = (bp === 'lg' || bp === 'md') ? 2 : 6;
+
+            // Get all active keys for this breakpoint
+            const activeKeys = Object.keys(next).filter(k => next[k]);
+
+            // To be super safe and ensure no single-column stacking,
+            // we will re-derive positions for all active modules in a tight grid.
+            const newBpLayout = activeKeys.map((itemKey, index) => {
+              // Try to find if this item already has a valid position in currentBpLayout
+              const existing = currentBpLayout.find(i => i.i === itemKey);
+              if (existing && existing.x < cols && existing.y < maxRows) {
+                return { ...existing, maxW: 2, maxH: 2 };
+              }
+              // Otherwise find a new automatic spot
+              return {
+                i: itemKey,
+                x: index % cols,
+                y: Math.floor(index / cols),
+                w: 1,
+                h: 1,
+                maxW: 2,
+                maxH: 2
+              };
+            });
+
+            nextLayouts[bp] = newBpLayout;
+          });
+
+          localStorage.setItem('gvoid_widget_layouts', JSON.stringify(nextLayouts));
+          return nextLayouts;
+        });
+      }
+
+      return next;
+    });
+  };
 
   // Widget layout state with LocalStorage persistence
   const [layouts, setLayouts] = useState(() => {
     const saved = localStorage.getItem('gvoid_widget_layouts');
+    const bps = ['lg', 'md', 'sm', 'xs', 'xxs'];
+
     if (saved) {
       const parsed = JSON.parse(saved);
-      // Ensure existing layouts respect the new max constraints
-      if (parsed.lg) {
-        parsed.lg = parsed.lg.map(item => ({ ...item, maxH: 2, maxW: 2 }));
-      }
-      return parsed;
+      const updated = {};
+      bps.forEach(bp => {
+        // Ensure all items in all breakpoints are constrained to 2x2 max
+        const layout = parsed[bp] || DEFAULT_LAYOUT;
+        updated[bp] = layout.map(item => ({ ...item, maxH: 2, maxW: 2 }));
+      });
+      return updated;
     }
-    return { lg: DEFAULT_LAYOUT };
+
+    const initial = {};
+    bps.forEach(bp => {
+      initial[bp] = DEFAULT_LAYOUT.map(item => ({ ...item, maxH: 2, maxW: 2 }));
+    });
+    return initial;
   });
 
   useEffect(() => {
@@ -138,6 +215,7 @@ export default function App() {
               <NavMenu
                 onOpenStats={() => setIsStatsOpen(true)}
                 onOpenSettings={() => setIsSettingsOpen(true)}
+                onOpenModules={() => setIsModulesOpen(true)}
               />
             </header>
 
@@ -151,19 +229,17 @@ export default function App() {
                     layouts={layouts}
                     breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                     cols={{ lg: 3, md: 3, sm: 2, xs: 1, xxs: 1 }}
-                    rowHeight={200} // Further reduced to ensure 3 rows fit with safe margins
+                    rowHeight={160} // Reduced height to ensure 2 rows fit comfortably
                     onLayoutChange={onLayoutChange}
                     draggableHandle=".drag-handle"
-                    compactType={null}
-                    verticalCompact={false}
-                    preventCollision={true}
-                    allowOverlap={false}     // Disabled overlap to prioritize handle visibility
-                    isBounded={true}        // Strictly keep within the grid bounds
-                    maxRows={3}              // Constrain to 3 rows
-                    maxW={2}                 // Prevent any widget from being wider than 2 units
-                    maxH={2}                 // Prevent any widget from being taller than 2 units
+                    compactType="vertical"
+                    verticalCompact={true}
+                    preventCollision={false}
+                    margin={[20, 20]} // Increased margin for cleaner look
+                    isBounded={true}
+                    maxRows={2}
                   >
-                    {Object.keys(WIDGETS).map(key => (
+                    {Object.keys(WIDGETS).filter(key => activeModules[key]).map(key => (
                       <StickyWidget key={key} id={key}>
                         {WIDGETS[key]}
                       </StickyWidget>
@@ -182,6 +258,12 @@ export default function App() {
             <StatsPage
               isOpen={isStatsOpen}
               onClose={() => setIsStatsOpen(false)}
+            />
+            <ModulesModal
+              isOpen={isModulesOpen}
+              onClose={() => setIsModulesOpen(false)}
+              activeModules={activeModules}
+              onToggleModule={toggleModule}
             />
             <Terminal isOpen={isTerminalOpen} onClose={() => setIsTerminalOpen(false)} />
           </div>
