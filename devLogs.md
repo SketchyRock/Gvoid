@@ -5,9 +5,8 @@ Start local host:
 
 TODO:
 
-- implement a bar next to statistics so the user can choose which sticky notes the user wants
 - improve timer to be more interactive and interesting (NEEDS WORK)
-- simplistic terminal like audio visualizer
+- simplistic audio visualizer
 - add more rpg elemnts to the game: skill tree, economy, expeditions, etc.
 - integrate the task completion more into the game aspect
 - add a cosmetic shop to spend void matter on

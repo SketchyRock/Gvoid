@@ -31,11 +31,12 @@ export default function useTimer(initialMode = 'FOCUS') {
     }, [settings]);
 
     // Update time left when settings change (if not active)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         if (!isActive) {
             setTimeLeft(getDuration(mode));
         }
-    }, [settings.pomodoroLength, settings.shortBreakLength, mode, getDuration, isActive]);
+    }, [settings.pomodoroLength, settings.shortBreakLength, mode, getDuration]);
 
     // Format MM:SS
     function formatTime(seconds) {

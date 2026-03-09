@@ -120,7 +120,6 @@ export default function SettingsPage({ isOpen, onClose, onResetLayouts }) {
                                     onChange={(e) => handleChange('alarmSound', e.target.value)}
                                     className="w-full bg-gray-900 border border-gray-700 rounded-lg p-2 focus:ring-2 focus:ring-blue-soft outline-none"
                                 >
-                                    <option value="digital">Digital (Classic)</option>
                                     <option value="bell">Temple Bell</option>
                                     <option value="chime">Crystal Chime</option>
                                     <option value="wood">Wood Tap</option>

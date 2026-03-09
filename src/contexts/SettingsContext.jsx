@@ -12,7 +12,7 @@ export const SettingsProvider = ({ children }) => {
         shortBreakLength: 5,
         autoStartBreaks: false,
         autoStartPomodoros: false,
-        alarmSound: 'digital',
+        alarmSound: 'bell',
         alarmVolume: 50,
         desktopNotifications: false,
         theme: 'deep-focus',

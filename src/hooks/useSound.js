@@ -6,7 +6,6 @@ const CDN_BASE = 'https://cdn.jsdelivr.net/gh/rse/soundfx/soundfx.d';
 
 const SOUNDS = {
     // Alarm variants
-    digital: `${CDN_BASE}/alarm1.mp3`,    // Digital Alert
     bell: `${CDN_BASE}/resonance1.mp3`,   // Resonant Bell
     chime: `${CDN_BASE}/resonance2.mp3`,  // High Chime
     wood: `${CDN_BASE}/resonance3.mp3`,   // Deep Resonant Wood-like sound
@@ -54,7 +53,7 @@ export default function useSound() {
     }, [settings.taskSound, playSound]);
 
     const playAlarm = useCallback(() => {
-        playSound(settings.alarmSound || 'digital');
+        playSound(settings.alarmSound || 'bell');
     }, [settings.alarmSound, playSound]);
 
     return {
