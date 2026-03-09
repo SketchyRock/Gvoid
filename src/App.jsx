@@ -16,6 +16,7 @@ import StatsPage from './components/stats/StatsPage';
 import GlobalXPBar from './components/layout/GlobalXPBar';
 import SplashScreen from './components/layout/SplashScreen';
 import Terminal from './components/layout/Terminal';
+import NavMenu from './components/layout/NavMenu';
 
 const WIDGETS = {
   timer: <PomodoroTimer />,
@@ -134,23 +135,10 @@ export default function App() {
 
               <GlobalXPBar />
 
-              <div className="flex gap-6 items-center">
-                <button
-                  onClick={() => setIsStatsOpen(true)}
-                  className="text-gray-300 hover:text-purple-soft hover:scale-110 transition-all flex items-center gap-1.5"
-                  title="Mission Control Stats"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                </button>
-                <button
-                  onClick={() => setIsSettingsOpen(true)}
-                  className="text-gray-300 hover:text-gray-100 hover:scale-105 transition-all text-xs uppercase tracking-widest font-semibold"
-                >
-                  Settings
-                </button>
-              </div>
+              <NavMenu
+                onOpenStats={() => setIsStatsOpen(true)}
+                onOpenSettings={() => setIsSettingsOpen(true)}
+              />
             </header>
 
             {/* Main Focus Area - Fixed Viewport, No Scrolling */}
