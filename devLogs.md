@@ -5,4 +5,3 @@ Start local host:
 
 TODO:
 - add a cosmetic shop to spend void matter on
-- clean up the repository
