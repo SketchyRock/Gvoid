@@ -102,12 +102,6 @@ export default function App() {
     });
   };
 
-  const getGridItemConfig = (key) => {
-    const layoutArray = layouts.lg || DEFAULT_LAYOUT;
-    const config = layoutArray.find(item => item.i === key);
-    return config || { x: 0, y: 0, w: 1, h: 1, maxH: 2, maxW: 2 };
-  };
-
   const resetLayouts = () => {
     setLayouts({ lg: DEFAULT_LAYOUT });
     localStorage.removeItem('gvoid_widget_layouts');

@@ -1,6 +1,63 @@
 import React, { useEffect, useRef } from 'react';
 import { useGame } from '../../contexts/GameContext';
 
+class Particle {
+    constructor(x, y, dx, dy, size, color) {
+        this.x = x;
+        this.y = y;
+        this.dx = dx;
+        this.dy = dy;
+        this.size = size;
+        this.color = color;
+        this.life = 1; // Alpha
+    }
+
+    draw(ctx) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+        ctx.fillStyle = `rgba(${this.color}, ${this.life})`;
+        ctx.fill();
+    }
+
+    update(ctx, centerX, centerY, active, singularityRadius) {
+        // Calculate direction to center
+        const dx = centerX - this.x;
+        const dy = centerY - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Pull effect strength based on active state
+        const pullStrength = active ? 0.05 : 0.005;
+        const currentPull = Math.max(0.001, pullStrength * (100 / Math.max(10, distance)));
+
+        this.dx += dx * currentPull * 0.01;
+        this.dy += dy * currentPull * 0.01;
+
+        // Orbit effect
+        if (active) {
+            this.dx += dy * 0.015; // Tangential velocity creates spiral
+            this.dy -= dx * 0.015;
+        } else {
+            this.dx += dy * 0.002;
+            this.dy -= dx * 0.002;
+        }
+
+        // Add slight friction to keep speeds reasonable
+        this.dx *= 0.98;
+        this.dy *= 0.98;
+
+        this.x += this.dx;
+        this.y += this.dy;
+
+        // Fade out as it gets very close to the event horizon
+        if (distance < singularityRadius * 1.5) {
+            this.life -= 0.08;
+        }
+
+        this.draw(ctx);
+        return this.life > 0;
+    }
+}
+
 export default function VoidStickyNote() {
     const canvasRef = useRef(null);
     const { isTimerActive, level } = useGame();
@@ -26,64 +83,6 @@ export default function VoidStickyNote() {
         resize();
         window.addEventListener('resize', resize);
 
-        class Particle {
-            constructor(x, y, dx, dy, size, color) {
-                this.x = x;
-                this.y = y;
-                this.dx = dx;
-                this.dy = dy;
-                this.size = size;
-                this.color = color;
-                this.life = 1; // Alpha
-            }
-
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-                ctx.fillStyle = `rgba(${this.color}, ${this.life})`;
-                ctx.fill();
-            }
-
-            update(centerX, centerY, active) {
-                // Calculate direction to center
-                const dx = centerX - this.x;
-                const dy = centerY - this.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                // Pull effect strength based on active state
-                const pullStrength = active ? 0.05 : 0.005;
-                const currentPull = Math.max(0.001, pullStrength * (100 / Math.max(10, distance)));
-
-                this.dx += dx * currentPull * 0.01;
-                this.dy += dy * currentPull * 0.01;
-
-                // Orbit effect
-                if (active) {
-                    this.dx += dy * 0.015; // Tangential velocity creates spiral
-                    this.dy -= dx * 0.015;
-                } else {
-                    this.dx += dy * 0.002;
-                    this.dy -= dx * 0.002;
-                }
-
-                // Add slight friction to keep speeds reasonable
-                this.dx *= 0.98;
-                this.dy *= 0.98;
-
-                this.x += this.dx;
-                this.y += this.dy;
-
-                // Fade out as it gets very close to the event horizon
-                if (distance < singularityRadius * 1.5) {
-                    this.life -= 0.08;
-                }
-
-                this.draw();
-                return this.life > 0;
-            }
-        }
-
-        let lastTime = Date.now();
         const render = () => {
             const now = Date.now();
             // Create a trailing effect by using a semi-transparent black overlay
@@ -143,7 +142,7 @@ export default function VoidStickyNote() {
 
             // Update focus essence particles
             for (let i = particles.length - 1; i >= 0; i--) {
-                const isAlive = particles[i].update(centerX, centerY, isTimerActive);
+                const isAlive = particles[i].update(ctx, centerX, centerY, isTimerActive, singularityRadius);
                 if (!isAlive) {
                     particles.splice(i, 1);
                 }

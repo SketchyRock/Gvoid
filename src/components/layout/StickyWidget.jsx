@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 
-const StickyWidget = forwardRef(({ id, children, className, style, onMouseDown, onMouseUp, onTouchStart, onTouchEnd, ...props }, ref) => {
+const StickyWidget = forwardRef(({ children, className, style, onMouseDown, onMouseUp, onTouchStart, onTouchEnd, ...props }, ref) => {
     // react-grid-layout passes style, className, and drag handlers down.
     // We must apply them to the root DOM element.
     return (

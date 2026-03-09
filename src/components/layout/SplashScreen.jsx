@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
 export default function SplashScreen() {
-    const [isVisible, setIsVisible] = useState(false);
+    const [isVisible, setIsVisible] = useState(() => {
+        return !localStorage.getItem('gvoid_has_seen_splash');
+    });
     const [isFadingOut, setIsFadingOut] = useState(false);
 
     useEffect(() => {
-        // Check if the user has already seen the splash screen
-        const hasSeenSplash = localStorage.getItem('gvoid_has_seen_splash');
-
-        // Show immediately if they haven't seen it
-        if (!hasSeenSplash) {
-            setIsVisible(true);
-        }
     }, []);
 
     const handleEnter = () => {

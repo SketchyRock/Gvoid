@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSettings } from '../contexts/SettingsContext';
 import { useStats } from '../contexts/StatsContext';
@@ -35,6 +36,13 @@ export default function useTimer(initialMode = 'FOCUS') {
             setTimeLeft(getDuration(mode));
         }
     }, [settings.pomodoroLength, settings.shortBreakLength, mode, getDuration, isActive]);
+
+    // Format MM:SS
+    function formatTime(seconds) {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    };
 
     // Update tab title
     useEffect(() => {
@@ -159,13 +167,6 @@ export default function useTimer(initialMode = 'FOCUS') {
             offTabTimeStr.current = 0;
             lastBlurTime.current = null;
         }
-    };
-
-    // Format MM:SS
-    function formatTime(seconds) {
-        const m = Math.floor(seconds / 60);
-        const s = seconds % 60;
-        return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
     };
 
     return {

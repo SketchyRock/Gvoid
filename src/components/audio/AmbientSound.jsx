@@ -14,7 +14,6 @@ export default function AmbientSound() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [activeTrackId, setActiveTrackId] = useState(SOUND_TRACKS[0].id);
     const [volume, setVolume] = useState(50);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isReady, setIsReady] = useState(false);
 
     const playerRef = useRef(null);
@@ -128,7 +127,6 @@ export default function AmbientSound() {
     const handleTrackChange = (id) => {
         playClick();
         setActiveTrackId(id);
-        setIsMenuOpen(false);
 
         if (playerRef.current) {
             const track = SOUND_TRACKS.find(t => t.id === id);

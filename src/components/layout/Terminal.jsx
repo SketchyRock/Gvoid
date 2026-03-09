@@ -53,7 +53,7 @@ const coffeeArt = `
 `;
 
 export default function Terminal({ isOpen, onClose }) {
-    const { settings, updateSettings } = useSettings();
+    const { updateSettings } = useSettings();
     const [lines, setLines] = useState([
         { type: 'system', text: 'Gvoid OS v1.0.0 initializing...' },
         { type: 'system', text: 'Type "help" for a list of valid commands.' }
@@ -148,12 +148,13 @@ export default function Terminal({ isOpen, onClose }) {
                     addLine('Usage: cat [file]', 'error');
                 }
                 break;
-            case 'coffee':
+            case 'coffee': {
                 const artLines = coffeeArt.split('\n');
                 artLines.forEach(l => {
                     if (l.trim() !== '') addLine(l, 'art');
                 });
                 break;
+            }
             case 'whoami':
                 addLine('GitHub: https://github.com/SketchyRock', 'link');
                 break;
