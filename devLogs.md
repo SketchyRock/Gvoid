@@ -5,7 +5,6 @@ Start local host:
 
 TODO:
 
-- improve timer to be more interactive and interesting (NEEDS WORK)
 - simplistic audio visualizer
 - add more rpg elemnts to the game: skill tree, economy, expeditions, etc.
 - integrate the task completion more into the game aspect
