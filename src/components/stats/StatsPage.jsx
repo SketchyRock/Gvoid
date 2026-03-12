@@ -34,7 +34,7 @@ export default function StatsPage({ isOpen, onClose }) {
 
     const handleResetGame = () => {
         playClick();
-        if (window.confirm('Reset all game progress? This cannot be undone and will reset your level, XP, and Void Matter.')) {
+        if (window.confirm('Reset all game progress? This cannot be undone and will reset your level, prestige, XP, and Void Matter.')) {
             resetGame();
         }
     };

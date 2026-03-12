@@ -60,7 +60,7 @@ class Particle {
 
 export default function VoidStickyNote() {
     const canvasRef = useRef(null);
-    const { isTimerActive, level } = useGame();
+    const { isTimerActive, level, prestigeLevel } = useGame();
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -179,7 +179,9 @@ export default function VoidStickyNote() {
             <div className="absolute bottom-5 left-0 w-full px-5 flex justify-between items-end z-10 pointer-events-none">
                 <div className="flex flex-col gap-1 drop-shadow-md">
                     <span className="text-[9px] text-gray-400 uppercase tracking-widest">Core Power</span>
-                    <span className="text-2xl font-light text-blue-soft leading-none">Lv. {level}</span>
+                    <span className="text-2xl font-light text-blue-soft leading-none">
+                        {prestigeLevel > 0 ? `P. ${prestigeLevel}` : `Lv. ${level}`}
+                    </span>
                 </div>
             </div>
 

@@ -177,10 +177,10 @@ export default function AmbientSound() {
 
     return (
         <div className="w-full h-full transition-opacity duration-500 opacity-100 flex flex-col">
-            <div className="bg-gray-800 p-5 rounded-2xl border border-gray-700 shadow-xl relative overflow-hidden group h-full flex flex-col">
+            <div className="bg-gray-800 p-3.5 rounded-2xl border border-gray-700 shadow-xl relative overflow-hidden group h-full flex flex-col">
                 {/* Header */}
-                <div className="flex justify-between items-center mb-4 relative z-10 shrink-0">
-                    <h2 className="text-gray-300 text-[10px] uppercase tracking-[0.2em] font-semibold">
+                <div className="flex justify-between items-center mb-1.5 relative z-10 shrink-0">
+                    <h2 className="text-gray-300 text-[9px] uppercase tracking-[0.25em] font-bold">
                         Ambient Sound
                     </h2>
                 </div>
@@ -190,13 +190,13 @@ export default function AmbientSound() {
                     <div ref={containerRef} />
                 </div>
 
-                <div className="flex flex-col relative z-10 flex-1 justify-between">
+                <div className="flex flex-col relative z-10 flex-1 justify-between gap-1 overflow-hidden">
                     {/* Controls Row */}
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2.5 shrink-0">
                         <button
                             onClick={togglePlay}
                             disabled={!isReady}
-                            className={`w-10 h-10 flex-shrink-0 rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-sm text-sm
+                            className={`w-8 h-8 flex-shrink-0 rounded-full flex items-center justify-center transition-all hover:scale-110 shadow-sm text-xs
                                 ${!isReady ? 'bg-gray-700 text-gray-500 cursor-not-allowed' :
                                     isPlaying ? 'bg-blue-soft text-gray-900 hover:bg-blue-glow shadow-[0_0_8px_rgba(59,130,246,0.6)]' : 'bg-gray-700 text-gray-100 hover:bg-gray-500 hover:text-blue-soft'}`}
                             title={!isReady ? 'Loading...' : isPlaying ? 'Pause Audio' : 'Play Audio'}
@@ -205,12 +205,12 @@ export default function AmbientSound() {
                         </button>
 
                         <div className="flex-1">
-                            <div className="flex justify-between text-[9px] text-gray-500 mb-1 uppercase tracking-widest">
+                            <div className="flex justify-between text-[7px] text-gray-500 mb-0.5 uppercase tracking-widest leading-none font-bold">
                                 <span>Volume</span>
                                 <span>{volume}%</span>
                             </div>
-                            <div className="flex items-center gap-2 group/volume">
-                                <span className="text-[10px] text-gray-400 group-hover/volume:scale-110 transition-transform cursor-default">
+                            <div className="flex items-center gap-1.5 group/volume">
+                                <span className="text-[9px] text-gray-400 group-hover/volume:scale-110 transition-transform cursor-default">
                                     {volume > 50 ? '🔊' : volume > 0 ? '🔉' : '🔈'}
                                 </span>
                                 <input
@@ -227,15 +227,15 @@ export default function AmbientSound() {
                     </div>
 
                     {/* Track Selector */}
-                    <div className="grid grid-cols-3 gap-1.5 mt-3">
+                    <div className="grid grid-cols-3 gap-1 flex-1 min-h-0">
                         {SOUND_TRACKS.map(track => (
                             <button
                                 key={track.id}
                                 onClick={() => handleTrackChange(track.id)}
-                                className={`flex flex-col items-center justify-center py-1.5 px-0.5 rounded-lg transition-all hover:-translate-y-0.5 group/btn
+                                className={`flex flex-col items-center justify-center py-1 px-0.5 rounded-lg transition-all hover:-translate-y-0.5 group/btn border
                                     ${activeTrackId === track.id
-                                        ? 'bg-gray-700 text-blue-soft shadow-md border border-gray-600 ring-1 ring-blue-soft/20'
-                                        : 'text-gray-400 hover:text-gray-200 bg-gray-900/40 hover:bg-gray-700/50 border border-transparent'}`}
+                                        ? 'bg-gray-700 text-blue-soft shadow-md border-blue-soft/30 ring-1 ring-blue-soft/10'
+                                        : 'text-gray-400 hover:text-gray-200 bg-gray-900/40 hover:bg-gray-700/50 border-transparent'}`}
                             >
                                 <span className="text-[9px] font-bold tracking-tighter leading-none mb-0.5">
                                     {track.label}

@@ -4,7 +4,9 @@ import { useGame } from '../../contexts/GameContext';
 
 export default function StatsCoreMetrics({ onSelectMetric }) {
     const { metrics, stats } = useStats();
-    const { level, xp, voidMatter } = useGame();
+    const { level, prestigeLevel, xp, voidMatter } = useGame();
+
+    const isPrestige = (prestigeLevel || 0) > 0;
 
     return (
         <div className="flex flex-col gap-6 animate-fade-in">
@@ -12,8 +14,12 @@ export default function StatsCoreMetrics({ onSelectMetric }) {
             <h3 className="text-xs font-bold uppercase tracking-widest text-blue-soft border-b border-gray-700 pb-2">Interstellar Log</h3>
             <div className="grid grid-cols-3 gap-4">
                 <div className="bg-gray-900 border border-gray-700 rounded-xl p-4 flex flex-col items-center justify-center relative shadow-inner text-center w-full h-full">
-                    <span className="text-3xl font-light text-blue-soft mb-1 tabular-nums transition-transform hover:scale-110">{level || 1}</span>
-                    <span className="text-[10px] uppercase tracking-widest text-gray-400 mt-1">Core Level</span>
+                    <span className={`text-3xl font-light mb-1 tabular-nums transition-transform hover:scale-110 ${isPrestige ? 'text-amber-500' : 'text-blue-soft'}`}>
+                        {isPrestige ? prestigeLevel : level || 1}
+                    </span>
+                    <span className="text-[10px] uppercase tracking-widest text-gray-400 mt-1">
+                        {isPrestige ? 'Prestige Level' : 'Core Level'}
+                    </span>
                 </div>
                 <div className="bg-gray-900 border border-gray-700 rounded-xl p-4 flex flex-col items-center justify-center relative shadow-inner text-center w-full h-full">
                     <span className="text-3xl font-light text-purple-soft mb-1 tabular-nums transition-transform hover:scale-110">{isNaN(xp) ? 0 : Math.floor(xp)}</span>

@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSettings } from '../../contexts/SettingsContext';
+import { useGame } from '../../contexts/GameContext';
 
 const commandsList = [
     { cmd: 'help / h', desc: 'List available commands' },
+    { cmd: 'status', desc: 'Query current progression status' },
     { cmd: 'sudo', desc: 'Request administrative override' },
     { cmd: 'ls -a', desc: 'Reveal hidden architecture' },
     { cmd: 'cat [file]', desc: 'Output file contents' },
@@ -54,6 +56,7 @@ const coffeeArt = `
 
 export default function Terminal({ isOpen, onClose }) {
     const { updateSettings } = useSettings();
+    const { level, prestigeLevel, xp, xpNeeded, voidMatter, isTimerActive } = useGame();
     const [lines, setLines] = useState([
         { type: 'system', text: 'Gvoid OS v1.0.0 initializing...' },
         { type: 'system', text: 'Type "help" for a list of valid commands.' }
@@ -153,6 +156,24 @@ export default function Terminal({ isOpen, onClose }) {
                 artLines.forEach(l => {
                     if (l.trim() !== '') addLine(l, 'art');
                 });
+                addLine('');
+                addLine('--- Peripheral Levels ---');
+                addLine('Caffeine Content:  [||||||||--] 82%');
+                addLine('Hydration Index:   [||||------] 40%');
+                addLine('Focus Stability:   ' + (isTimerActive ? '[STABLE]' : '[DORMANT]'));
+                addLine('Mental Fog Level:  ' + (level > 40 ? 'LOW' : 'MODERATE'));
+                break;
+            }
+            case 'status': {
+                addLine('--- Core Integrity ---');
+                addLine(`Protocol Level:    ${level}`);
+                if (prestigeLevel > 0) {
+                    addLine(`Prestige Rank:     P-${prestigeLevel}`);
+                }
+                addLine(`Void Essence:      ${Math.floor(xp)} / ${xpNeeded} XP`);
+                addLine(`Void Matter:       ${voidMatter} units`);
+                addLine(`System State:      ${isTimerActive ? 'ACTIVE_STUDY' : 'PASSIVE_RECOVERY'}`);
+                addLine(`XP Flux Rate:      ${isTimerActive ? '10.0x (NOMINAL)' : '2.5x (THROTTLED)'}`);
                 break;
             }
             case 'whoami':
