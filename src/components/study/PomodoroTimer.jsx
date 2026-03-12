@@ -16,11 +16,11 @@ export default function PomodoroTimer() {
         changeMode
     } = useTimer();
     const { playClick } = useSound();
-    const { setTimerActive } = useGame();
+    const { setTimerState } = useGame();
 
     React.useEffect(() => {
-        setTimerActive(isActive);
-    }, [isActive, setTimerActive]);
+        setTimerState({ isActive, mode });
+    }, [isActive, mode, setTimerState]);
 
     const handleToggle = () => {
         playClick();

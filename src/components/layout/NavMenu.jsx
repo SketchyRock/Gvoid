@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-const NavMenu = ({ onOpenStats, onOpenSettings, onOpenModules }) => {
+const NavMenu = ({ onOpenStats, onOpenSettings, onOpenModules, onOpenSkillTree }) => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -34,6 +34,11 @@ const NavMenu = ({ onOpenStats, onOpenSettings, onOpenModules }) => {
 
   const handleModulesClick = () => {
     onOpenModules();
+    setIsOpen(false);
+  };
+
+  const handleSkillTreeClick = () => {
+    onOpenSkillTree();
     setIsOpen(false);
   };
 
@@ -109,12 +114,17 @@ const NavMenu = ({ onOpenStats, onOpenSettings, onOpenModules }) => {
         </div>
 
         <div className="p-2 border-t border-gray-800/50">
-          <div className="px-4 py-2 text-[10px] font-bold text-gray-500 uppercase tracking-widest">
-            Future Modules
-          </div>
-          <div className="px-4 py-3 text-xs text-gray-600 italic">
-            Expanding the void...
-          </div>
+          <button
+            onClick={handleSkillTreeClick}
+            className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-purple-300 hover:text-white hover:bg-purple-soft/10 rounded-xl transition-all group"
+          >
+            <div className="p-2 bg-purple-900/40 border border-purple-500/30 rounded-lg group-hover:bg-purple-soft/40 shadow-[0_0_10px_rgba(168,85,247,0.2)] transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <span className="font-bold tracking-widest uppercase text-xs">Skill Tree</span>
+          </button>
         </div>
       </div>
     </div>

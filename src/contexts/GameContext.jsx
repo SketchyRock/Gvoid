@@ -14,7 +14,11 @@ const DEFAULT_STATE = {
 
 export const GameProvider = ({ children }) => {
     // Timer active state fed from the app (managed externally so GameContext doesn't depend on Pomodoro directly)
-    const [isTimerActive, setIsTimerActive] = useState(false);
+    const [timerState, setTimerState] = useState({ isActive: false, mode: 'FOCUS' });
+    const [doubleNextReward, setDoubleNextReward] = useState(false);
+
+    // Modifiers fed from SkillTreeContext
+    const [gameModifiers, setGameModifiers] = useState({ singularity: false, momentum: false, voidAscendant: false });
 
     const [gameState, setGameState] = useState(() => {
         try {
@@ -66,52 +70,112 @@ export const GameProvider = ({ children }) => {
         }
     }, []);
 
+    const processXpGain = useCallback((prev, baseXpGain, modifiers) => {
+        let finalXpGain = baseXpGain;
+        if (modifiers?.xpMultiplier) {
+             finalXpGain += (baseXpGain * modifiers.xpMultiplier);
+        }
+
+        // Apply any specific modifiers
+        if (doubleNextReward) {
+            finalXpGain *= 2;
+        }
+
+        let newXp = prev.xp + finalXpGain;
+        let newLevel = prev.level;
+        let newPrestigeLevel = prev.prestigeLevel || 0;
+        let newVoidMatter = prev.voidMatter;
+
+        let xpNeeded = calculateXpNeeded(newLevel, newPrestigeLevel);
+
+        while (newXp >= xpNeeded) {
+            newXp -= xpNeeded;
+
+            if (newLevel < 50) {
+                newLevel += 1;
+                newVoidMatter += 1;
+                if (modifiers.voidAscendant) newVoidMatter += 2;
+            } else {
+                newPrestigeLevel += 1;
+                newLevel = 50;
+                newVoidMatter += 2;
+                if (modifiers.voidAscendant) newVoidMatter += 2;
+            }
+
+            xpNeeded = calculateXpNeeded(newLevel, newPrestigeLevel);
+
+            if (newLevel > 10000 || newPrestigeLevel > 100000) break;
+        }
+
+        return {
+            ...prev,
+            level: newLevel,
+            prestigeLevel: newPrestigeLevel,
+            xp: newXp,
+            voidMatter: newVoidMatter
+        };
+    }, [calculateXpNeeded, doubleNextReward]);
+
+    const addXp = useCallback((amount) => {
+        setGameState(prev => processXpGain(prev, amount, gameModifiers));
+    }, [processXpGain, gameModifiers]);
+
     // Core Idle Loop (Every 60 seconds)
     useEffect(() => {
         const intervalId = setInterval(() => {
             setGameState(prev => {
                 // Rate: 10 XP/min when studying, 2.5 XP/min when passive (0.25x)
-                const xpGain = isTimerActive ? 10 : 2.5;
-                let newXp = prev.xp + xpGain;
-                let newLevel = prev.level;
-                let newPrestigeLevel = prev.prestigeLevel || 0;
-                let newVoidMatter = prev.voidMatter;
+                let baseGain = 2.5; // passive
 
-                let xpNeeded = calculateXpNeeded(newLevel, newPrestigeLevel);
-
-                // Handle multi-leveling up
-                while (newXp >= xpNeeded) {
-                    newXp -= xpNeeded;
-
-                    if (newLevel < 50) {
-                        newLevel += 1;
-                        newVoidMatter += 1;
-                    } else {
-                        // Beyond level 50, prestige levels start
-                        newPrestigeLevel += 1;
-                        newLevel = 50; // Cap base level at 50
-                        newVoidMatter += 2; // Prestige bonus
+                if (timerState.isActive) {
+                    if (timerState.mode === 'FOCUS') {
+                        baseGain = 10;
+                    } else if (timerState.mode === 'BREAK') {
+                        // Normally 0, but with momentum it's half of passive (1.25)
+                        baseGain = gameModifiers.momentum ? 1.25 : 0;
                     }
-
-                    xpNeeded = calculateXpNeeded(newLevel, newPrestigeLevel);
-
-                    if (newLevel > 10000 || newPrestigeLevel > 100000) break;
                 }
 
-                return {
-                    ...prev,
-                    level: newLevel,
-                    prestigeLevel: newPrestigeLevel,
-                    xp: newXp,
-                    voidMatter: newVoidMatter
-                };
+                // Singularity: +10% to completely idle passive gains OR all gains?
+                // The plan says "All passive background XP gains are permanently increased by 10%".
+                // Let's assume it only applies to the 2.5 idle and 1.25 momentum, not the 10 focus.
+                let xpGain = baseGain;
+                if (!timerState.isActive && gameModifiers.singularity) {
+                    xpGain = baseGain * 1.1;
+                }
+
+                return processXpGain(prev, xpGain, gameModifiers);
             });
         }, 60000); // 60 seconds
 
         return () => clearInterval(intervalId);
-    }, [isTimerActive, calculateXpNeeded]);
+    }, [timerState, gameModifiers, processXpGain]);
 
     const xpNeededForCurrentLevel = calculateXpNeeded(gameState.level, gameState.prestigeLevel);
+
+    const subtractVoidMatter = useCallback((amount) => {
+        setGameState(prev => ({
+            ...prev,
+            voidMatter: Math.max(0, prev.voidMatter - amount)
+        }));
+    }, []);
+
+    const grantBonusVoidMatter = useCallback((amount) => {
+        setGameState(prev => {
+            const finalAmount = doubleNextReward ? amount * 2 : amount;
+            // The flag is consumed by the timer hook, but we apply it here
+            return {
+                ...prev,
+                voidMatter: prev.voidMatter + finalAmount
+            };
+        });
+    }, [doubleNextReward]);
+
+    const consumeDoubleNextRewardFlag = useCallback(() => {
+        const wasDouble = doubleNextReward;
+        setDoubleNextReward(false);
+        return wasDouble;
+    }, [doubleNextReward]);
 
     const resetGame = () => {
         setGameState(DEFAULT_STATE);
@@ -121,8 +185,16 @@ export const GameProvider = ({ children }) => {
         <GameContext.Provider value={{
             ...gameState,
             xpNeeded: xpNeededForCurrentLevel,
-            isTimerActive,
-            setTimerActive: setIsTimerActive,
+            timerState,
+            setTimerState,
+            doubleNextReward,
+            setDoubleNextReward,
+            subtractVoidMatter,
+            grantBonusVoidMatter,
+            consumeDoubleNextRewardFlag,
+            addXp,
+            setGameModifiers,
+            gameModifiers,
             resetGame
         }}>
             {children}

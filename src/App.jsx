@@ -12,12 +12,14 @@ import VoidStickyNote from './components/study/VoidStickyNote';
 import { SettingsProvider } from './contexts/SettingsContext';
 import { StatsProvider } from './contexts/StatsContext';
 import { GameProvider } from './contexts/GameContext';
+import { SkillTreeProvider } from './contexts/SkillTreeContext';
 import StatsPage from './components/stats/StatsPage';
 import GlobalXPBar from './components/layout/GlobalXPBar';
 import SplashScreen from './components/layout/SplashScreen';
 import Terminal from './components/layout/Terminal';
 import NavMenu from './components/layout/NavMenu';
 import ModulesModal from './components/layout/ModulesModal';
+import SkillTreeModal from './components/layout/SkillTreeModal';
 
 const WIDGETS = {
   timer: <PomodoroTimer />,
@@ -39,6 +41,7 @@ export default function App() {
   const [isStatsOpen, setIsStatsOpen] = useState(false);
   const [isTerminalOpen, setIsTerminalOpen] = useState(false);
   const [isModulesOpen, setIsModulesOpen] = useState(false);
+  const [isSkillTreeOpen, setIsSkillTreeOpen] = useState(false);
   const containerRef = useRef(null);
   const [containerWidth, setContainerWidth] = useState(0);
 
@@ -188,7 +191,8 @@ export default function App() {
   return (
     <StatsProvider>
       <GameProvider>
-        <SettingsProvider>
+        <SkillTreeProvider>
+          <SettingsProvider>
           <div className="h-screen flex flex-col bg-gray-900 text-gray-100 transition-colors duration-700 ease-in-out font-sans overflow-hidden">
             <SplashScreen />
 
@@ -216,6 +220,7 @@ export default function App() {
                 onOpenStats={() => setIsStatsOpen(true)}
                 onOpenSettings={() => setIsSettingsOpen(true)}
                 onOpenModules={() => setIsModulesOpen(true)}
+                onOpenSkillTree={() => setIsSkillTreeOpen(true)}
               />
             </header>
 
@@ -265,9 +270,14 @@ export default function App() {
               activeModules={activeModules}
               onToggleModule={toggleModule}
             />
+            <SkillTreeModal
+              isOpen={isSkillTreeOpen}
+              onClose={() => setIsSkillTreeOpen(false)}
+            />
             <Terminal isOpen={isTerminalOpen} onClose={() => setIsTerminalOpen(false)} />
           </div>
         </SettingsProvider>
+       </SkillTreeProvider>
       </GameProvider>
     </StatsProvider>
   );

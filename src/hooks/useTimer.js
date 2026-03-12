@@ -2,6 +2,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSettings } from '../contexts/SettingsContext';
 import { useStats } from '../contexts/StatsContext';
+import { useGame } from '../contexts/GameContext';
+import { useSkillTree } from '../contexts/SkillTreeContext';
 import useSound from './useSound';
 
 export const MODES = {
@@ -13,6 +15,9 @@ export default function useTimer(initialMode = 'FOCUS') {
     const { settings } = useSettings();
     const { recordSession } = useStats();
     const { playAlarm } = useSound();
+    const { addXp, grantBonusVoidMatter, setDoubleNextReward, gameModifiers } = useGame();
+    const { hasSkill } = useSkillTree();
+
     const [mode, setMode] = useState(initialMode);
     const [isActive, setIsActive] = useState(false);
 
@@ -24,6 +29,10 @@ export default function useTimer(initialMode = 'FOCUS') {
     const offTabTimeStr = useRef(0); // in ms
     const lastBlurTime = useRef(null);
 
+    // Skill Tree state
+    const firstPauseUsed = useRef(false);
+    const consecutivePerfectCount = useRef(0);
+
     // Get current mode duration
     const getDuration = useCallback((currentMode) => {
         if (currentMode === MODES.FOCUS) return settings.pomodoroLength * 60;
@@ -31,12 +40,11 @@ export default function useTimer(initialMode = 'FOCUS') {
     }, [settings]);
 
     // Update time left when settings change (if not active)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         if (!isActive) {
             setTimeLeft(getDuration(mode));
         }
-    }, [settings.pomodoroLength, settings.shortBreakLength, mode, getDuration]);
+    }, [settings.pomodoroLength, settings.shortBreakLength, mode, getDuration, isActive]);
 
     // Format MM:SS
     function formatTime(seconds) {
@@ -106,15 +114,68 @@ export default function useTimer(initialMode = 'FOCUS') {
                     lastBlurTime.current = null;
                 }
 
+                // Deep Breath logic
+                let penaltyTimeMs = offTabTimeStr.current;
+                if (hasSkill('deep_breath') && firstPauseUsed.current) {
+                    penaltyTimeMs = Math.max(0, penaltyTimeMs - 300000); // 5 mins forgiven
+                }
+
                 const totalDurationMs = getDuration(MODES.FOCUS) * 1000;
-                let efficiency = 100 - ((offTabTimeStr.current / totalDurationMs) * 100);
+                let efficiency = 100 - ((penaltyTimeMs / totalDurationMs) * 100);
                 efficiency = Math.max(0, Math.min(100, efficiency)); // Bound between 0 and 100
 
+                const durationMins = getDuration(MODES.FOCUS) / 60;
+
                 // Record session
-                recordSession(getDuration(MODES.FOCUS) / 60, efficiency);
+                recordSession(durationMins, efficiency);
+
+                // --- Skill Tree Bonuses ---
+                if (durationMins >= 25) {
+                    let xpGain = hasSkill('iron_will') ? 5 : 0;
+                    if (gameModifiers?.flatXpBonus) {
+                        xpGain += gameModifiers.flatXpBonus;
+                    }
+                    if (xpGain > 0) addXp(xpGain);
+
+                    if (efficiency === 100) {
+                        consecutivePerfectCount.current += 1;
+                        const threshold = hasSkill('event_horizon') ? 2 : (hasSkill('chain_reaction') ? 3 : Infinity);
+                        if (consecutivePerfectCount.current >= threshold) {
+                            setDoubleNextReward(true);
+                            consecutivePerfectCount.current = 0;
+                        }
+                    } else {
+                        consecutivePerfectCount.current = 0;
+                    }
+                } else {
+                    consecutivePerfectCount.current = 0;
+                }
+
+                if (hasSkill('focus_lens') && efficiency === 100) {
+                    grantBonusVoidMatter(1);
+                }
+
+                if (hasSkill('deep_void') && durationMins >= 45) {
+                    grantBonusVoidMatter(2);
+                }
+
+                if (hasSkill('stargazer')) {
+                    const hour = new Date().getHours();
+                    if (hour >= 22 || hour < 5) {
+                        grantBonusVoidMatter(1);
+                    }
+                }
+
+                if (gameModifiers?.voidMatterChance) {
+                    // E.g. voidMatterChance: 0.15 means 15% chance
+                    if (Math.random() < gameModifiers.voidMatterChance) {
+                        grantBonusVoidMatter(1);
+                    }
+                }
 
                 // Reset stats for next focus
                 offTabTimeStr.current = 0;
+                firstPauseUsed.current = false;
             }
 
             setMode(newMode);
@@ -127,7 +188,7 @@ export default function useTimer(initialMode = 'FOCUS') {
         }
 
         return () => clearInterval(intervalId);
-    }, [isActive, timeLeft, mode, getDuration, settings, playAlarm, recordSession]);
+    }, [isActive, timeLeft, mode, getDuration, settings, playAlarm, recordSession, addXp, grantBonusVoidMatter, hasSkill, setDoubleNextReward, gameModifiers]);
 
     // Terminal Commands Listener
     useEffect(() => {
@@ -153,11 +214,19 @@ export default function useTimer(initialMode = 'FOCUS') {
         };
     }, []);
 
-    const toggleTimer = () => setIsActive(!isActive);
+    const toggleTimer = () => {
+        if (isActive && mode === MODES.FOCUS && hasSkill('deep_breath') && !firstPauseUsed.current) {
+            firstPauseUsed.current = true;
+        }
+        setIsActive(!isActive);
+    };
 
     const resetTimer = () => {
         setIsActive(false);
         setTimeLeft(getDuration(mode));
+        if (mode === MODES.FOCUS) {
+            firstPauseUsed.current = false;
+        }
     };
 
     const changeMode = (newMode) => {
@@ -167,6 +236,7 @@ export default function useTimer(initialMode = 'FOCUS') {
         if (newMode === MODES.FOCUS) {
             offTabTimeStr.current = 0;
             lastBlurTime.current = null;
+            firstPauseUsed.current = false;
         }
     };
 
